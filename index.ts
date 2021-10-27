@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import { buffer } from 'stream/consumers';
 
 class Bufferlo {
   private _buffer: Buffer = null;
@@ -6,11 +7,20 @@ class Bufferlo {
   private _fd: number = 0;
   private _index: number = 0;
 
-  constructor(
-    buffer?: Buffer | string | number[] | ArrayBuffer | SharedArrayBuffer,
-    encoding: BufferEncoding = 'utf-8'
-  ) {
-    if (Buffer.isBuffer(buffer)) this._buffer = Buffer.from(buffer);
+  static ofArray(data: Uint8Array | ReadonlyArray<number>) {
+    const bf = new Bufferlo();
+    bf.buffer = Buffer.from(data);
+    return bf;
+  }
+
+  static ofArrayBuffer(arrayBuffer: WithImplicitCoercion<ArrayBuffer | SharedArrayBuffer>) {
+    const bf = new Bufferlo();
+    bf.buffer = Buffer.from(arrayBuffer);
+    return bf;
+  }
+
+  constructor(content?: string, encoding: BufferEncoding = 'utf-8') {
+    if (content) this._buffer = Buffer.from(content);
     this._encoding = encoding;
   }
 
@@ -26,6 +36,10 @@ class Bufferlo {
   set buffer(buffer: Buffer) {
     this._buffer = buffer;
     this.fixIndex();
+  }
+
+  get byteLength() {
+    return this.buffer.byteLength;
   }
 
   get encoding() {
@@ -56,10 +70,6 @@ class Bufferlo {
     return this.buffer.length;
   }
 
-  get byteLength() {
-    return this.buffer.byteLength;
-  }
-
   *[Symbol.iterator]() {
     return yield* this.buffer;
   }
@@ -69,14 +79,25 @@ class Bufferlo {
     this.index = 0;
   }
 
-  allocKiloBytes(n: number, fill: string | number | Buffer = 0) {
-    this.buffer = Buffer.alloc(1024 * n, fill, this.encoding);
+  allocBytesUnsafe(n: number) {
+    this.buffer = Buffer.allocUnsafe(n);
     this.index = 0;
   }
 
+  allocKiloBytes(n: number, fill: string | number | Buffer = 0) {
+    this.allocBytes(1024 * n, fill);
+  }
+
+  allocKiloBytesUnsafe(n: number) {
+    this.allocBytesUnsafe(1024 * n);
+  }
+
   allocMegaBytes(n: number, fill: string | number | Buffer = 0) {
-    this.buffer = Buffer.alloc(Math.pow(1024, 2) * n, fill, this.encoding);
-    this.index = 0;
+    this.allocBytes(Math.pow(1024, 2) * n, fill);
+  }
+
+  allocMegaBytesUnsafe(n: number) {
+    this.allocBytesUnsafe(Math.pow(1024, 2) * n);
   }
 
   append(content: string) {
@@ -86,6 +107,10 @@ class Bufferlo {
 
   available() {
     return this.length - this.index;
+  }
+
+  at(index: number) {
+    return this.buffer[index];
   }
 
   bytesLeft() {
@@ -122,8 +147,8 @@ class Bufferlo {
     return this.buffer.copy(buffer.buffer, targetStart, sourceStart, sourceEnd);
   }
 
-  copyFromIndex(buffer: Bufferlo) {
-    return this.copy(buffer, buffer.index, this.index);
+  copyToIndex(buffer: Bufferlo, sourceStart: number = 0, sourceEnd: number = this.length) {
+    return this.copy(buffer, buffer.index, sourceStart, sourceEnd);
   }
 
   copyToFile(path: string, cb?: () => void) {
@@ -148,8 +173,45 @@ class Bufferlo {
     return Buffer.byteLength(content, this.encoding) <= this.available();
   }
 
+  fromAscii(content: string) {
+    this.encoding = 'ascii';
+    this.buffer = Buffer.from(content, this.encoding);
+    this.index = this.buffer.length;
+  }
+
+  fromBinary(content: string) {
+    this.encoding = 'binary';
+    this.buffer = Buffer.from(content, this.encoding);
+    this.index = this.buffer.length;
+  }
+
+  fromFile(cb: (buffer: Bufferlo) => void) {
+    if (!this.fd) throw new Error('No file descriptor found!');
+    fs.readFile(this.fd, this.encoding, (err: Error, data: Buffer) => {
+      if (err) throw err;
+      this.buffer = Buffer.from(data);
+      this.index = this.buffer.length;
+      cb(this);
+    });
+  }
+
+  fromFileSync() {
+    if (!this.fd) throw new Error('No file descriptor found!');
+    this.buffer = Buffer.from(fs.readFileSync(this.fd, this.encoding), this.encoding);
+    this.index = this.buffer.length;
+  }
+
+  fromHex(content: string) {
+    if (!new RegExp(/[0-9a-f]/g).test(content)) throw new Error('No valid hex provided!');
+    this.encoding = 'hex';
+    this.buffer = Buffer.from(content, this.encoding);
+    this.index = this.buffer.length;
+  }
+
   fromUtf8(content: string) {
-    this.buffer = Buffer.from(content, 'utf-8');
+    this.encoding = 'utf-8';
+    this.buffer = Buffer.from(content, this.encoding);
+    this.index = this.buffer.length;
   }
 
   isBuffer() {
@@ -164,28 +226,72 @@ class Bufferlo {
     return this.available() === 0;
   }
 
-  loadFromFile(cb: (buffer: Bufferlo) => void) {
-    if (!this.fd) throw new Error('No file descriptor found!');
-    fs.readFile(this.fd, this.encoding, (err: Error, data: Buffer) => {
-      if (err) throw err;
-      this.buffer = Buffer.from(data);
-      this.index = this.buffer.length;
-      cb(this);
-    });
-  }
-
-  loadFromFileSync() {
-    if (!this.fd) throw new Error('No file descriptor found!');
-    this.buffer = Buffer.from(fs.readFileSync(this.fd, this.encoding), this.encoding);
-    this.index = this.buffer.length;
-  }
-
   openFile(path: string, mode: fs.OpenMode = 'r+') {
     this.fd = fs.openSync(path, mode);
   }
 
+  set(index: number, value: number) {
+    this.buffer[index] = value;
+  }
+
+  setBase(index: number, value: string, base: number = 10) {
+    this.buffer[index] = parseInt(value, base);
+  }
+
+  setBinary(index: number, value: string) {
+    this.setBase(index, value, 2);
+  }
+
+  setHex(index: number, value: string) {
+    this.setBase(index, value, 16);
+  }
+
+  setOctal(index: number, value: string) {
+    this.setBase(index, value, 8);
+  }
+
   slice(start: number = 0, end: number = this.length) {
     return this.buffer.slice(start, end);
+  }
+
+  toArray() {
+    return [...this.buffer];
+  }
+
+  toAscii() {
+    return this.toString('ascii');
+  }
+
+  toBinary() {
+    return this.toDecimal().toString(2);
+  }
+
+  toDecimal() {
+    return parseInt(this.toHex(), 16);
+  }
+
+  toHex() {
+    return this.toString('hex');
+  }
+
+  toJSON() {
+    return this.buffer.toJSON();
+  }
+
+  toOctal() {
+    return this.toDecimal().toString(8);
+  }
+
+  toString(encoding: BufferEncoding = this.encoding) {
+    return this.buffer.toString(encoding);
+  }
+
+  toUtf8() {
+    return this.toString('utf-8');
+  }
+
+  toView(offset: number = 0, length: number = this.length) {
+    return new DataView(this.buffer, offset, length);
   }
 
   write(content: string, offset: number = 0): number {
@@ -206,44 +312,31 @@ class Bufferlo {
     if (!this.fd) throw new Error('No file descriptor found!');
     fs.writeFileSync(this.fd, this.buffer, { encoding: this.encoding });
   }
-
-  toArray() {
-    return [...this.buffer];
-  }
-
-  toJSON() {
-    return this.buffer.toJSON();
-  }
-
-  toView(offset: number = 0, length: number = this.length) {
-    return new DataView(this.buffer, offset, length);
-  }
-
-  toAscii() {
-    return this.toString('ascii');
-  }
-
-  toBase64() {
-    return this.toString('base64');
-  }
-
-  toBinary() {
-    return this.toString('binary');
-  }
-
-  toHex() {
-    return this.toString('hex');
-  }
-
-  toUtf8() {
-    return this.toString('utf-8');
-  }
-
-  toString(encoding: BufferEncoding = this.encoding) {
-    return this.buffer.toString(encoding);
-  }
 }
 
+const bu = new Bufferlo();
+bu.fromUtf8('a');
+console.log(bu.toJSON());
+bu.setOctal(0, '142');
+console.log(bu.toJSON());
+
+/*
+console.log(bu.buffer.readInt8());
+console.log(bu.toDecimal());
+console.log(bu.toHex());
+console.log(bu.toAscii());
+console.log(bu.toBinary());
+*/
+
+/*
+const a = Buffer.from([255, 254]);
+console.log(a, a.toString(), a[0]);
+
+const b = new Uint32Array([2, 4, 8]);
+console.log(b, b.length, b.byteLength);
+*/
+
+/*
 const bf = new Bufferlo();
 bf.allocBytes(3);
 bf.append('a');
@@ -257,3 +350,4 @@ tmp.write('d', 1);
 for (const val of tmp) console.log(val);
 
 console.log(bf.buffer);
+*/
