@@ -5,6 +5,7 @@ A TypeScript library for the Node Buffer class.
 [![NPM](https://nodei.co/npm/bufferlo.js.png)](https://nodei.co/npm/bufferlo.js/)
 
 ![Tests](https://github.com/larswaechter/bufferlo.js/actions/workflows/tests.yaml/badge.svg)
+![Tests](https://github.com/larswaechter/bufferlo.js/actions/workflows/linter.yaml/badge.svg)
 
 ## Introduction
 
@@ -55,4 +56,4 @@ See [CONTRIBUTING.md](https://github.com/larswaechter/bufferlo.js/blob/master/CO
 
 ## 🔑 License
 
-[MIT](https://github.com/larswaechter/bufferlo.js/blob/master/LICENSE)
+bufferlo.js is released under [MIT](https://github.com/larswaechter/bufferlo.js/blob/master/LICENSE) license.
