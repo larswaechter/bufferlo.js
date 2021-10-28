@@ -1,7 +1,6 @@
 import * as fs from 'fs';
-import { buffer } from 'stream/consumers';
 
-class Bufferlo {
+export default class Bufferlo {
   private _buffer: Buffer = null;
   private _encoding: BufferEncoding;
   private _fd: number = 0;
@@ -106,20 +105,17 @@ class Bufferlo {
   }
 
   available() {
-    return this.length - this.index;
+    return this.isBuffer() ? this.length - this.index : 0;
   }
 
   at(index: number) {
     return this.buffer[index];
   }
 
-  bytesLeft() {
-    return this.buffer.length - this.buffer.indexOf(0x00);
-  }
-
   clone() {
     const bufferlo: Bufferlo = new Bufferlo();
-    bufferlo.buffer.set(this.buffer);
+    bufferlo.buffer = Buffer.alloc(this.length);
+    this.copy(bufferlo);
     bufferlo.encoding = this.encoding;
     bufferlo.index = this.index;
     return bufferlo;
@@ -166,7 +162,7 @@ class Bufferlo {
   }
 
   equals(bufferlo: Bufferlo) {
-    return this.buffer === bufferlo.buffer;
+    return this.buffer.equals(bufferlo.buffer);
   }
 
   fit(content: string) {
@@ -224,6 +220,23 @@ class Bufferlo {
 
   isFull() {
     return this.available() === 0;
+  }
+
+  moveIndex(position: 'start' | 'center' | 'end' | 'empty') {
+    switch (position) {
+      case 'start':
+        this.index = 0;
+        break;
+      case 'center':
+        this.index = Math.floor(this.length / 2);
+        break;
+      case 'end':
+        this.index = this.length;
+        break;
+      case 'empty':
+        this.index = this.buffer.indexOf(0);
+        break;
+    }
   }
 
   openFile(path: string, mode: fs.OpenMode = 'r+') {
@@ -315,10 +328,21 @@ class Bufferlo {
 }
 
 const bu = new Bufferlo();
+bu.allocBytes(3);
+bu.append('a');
+bu.append('b');
+bu.append('c');
+bu.moveIndex('start');
+bu.append('d');
+console.log(bu.buffer);
+
+/*
+const bu = new Bufferlo();
 bu.fromUtf8('a');
 console.log(bu.toJSON());
 bu.setOctal(0, '142');
 console.log(bu.toJSON());
+*/
 
 /*
 console.log(bu.buffer.readInt8());
