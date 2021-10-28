@@ -253,7 +253,6 @@ export default class Bufferlo {
   }
 
   fromHex(content: string) {
-    if (!new RegExp(/[0-9a-f]/g).test(content)) throw new Error('No valid hex provided!');
     this.encoding = 'hex';
     this.buffer = Buffer.from(content, this.encoding);
     this.index = this.buffer.length;
