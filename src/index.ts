@@ -6,6 +6,48 @@ export default class Bufferlo {
   private _fd: number = 0;
   private _index: number = 0;
 
+  static decimalTo(decimal: number, target: 'binary' | 'octal' | 'hex') {
+    switch (target) {
+      case 'binary':
+        return decimal.toString(2);
+      case 'octal':
+        return decimal.toString(8);
+      case 'hex':
+        return decimal.toString(16);
+    }
+  }
+
+  static binaryTo(binary: string, target: 'decimal' | 'octal' | 'hex') {
+    switch (target) {
+      case 'decimal':
+        return parseInt(binary, 2);
+      case 'octal':
+        return Bufferlo.decimalTo(parseInt(binary, 2), target);
+      case 'hex':
+        return Bufferlo.decimalTo(parseInt(binary, 2), target);
+      default:
+        return binary;
+    }
+  }
+
+  static hexTo(hex: string, target: 'binary' | 'decimal' | 'octal') {
+    switch (target) {
+      case 'decimal':
+        return parseInt(hex, 16);
+      default:
+        return Bufferlo.decimalTo(parseInt(hex, 16), target);
+    }
+  }
+
+  static octalTo(octal: string, target: 'binary' | 'decimal' | 'hex') {
+    switch (target) {
+      case 'decimal':
+        return parseInt(octal, 8);
+      default:
+        return Bufferlo.decimalTo(parseInt(octal, 8), target);
+    }
+  }
+
   static ofArray(data: Uint8Array | ReadonlyArray<number>) {
     const bf = new Bufferlo();
     bf.buffer = Buffer.from(data);

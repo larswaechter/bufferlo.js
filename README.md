@@ -5,7 +5,7 @@ A TypeScript library for the Node Buffer class.
 [![NPM](https://nodei.co/npm/bufferlo.js.png)](https://nodei.co/npm/bufferlo.js/)
 
 ![Tests](https://github.com/larswaechter/bufferlo.js/actions/workflows/tests.yaml/badge.svg)
-![Tests](https://github.com/larswaechter/bufferlo.js/actions/workflows/linter.yaml/badge.svg)
+![Linter](https://github.com/larswaechter/bufferlo.js/actions/workflows/linter.yaml/badge.svg)
 
 ## Introduction
 
