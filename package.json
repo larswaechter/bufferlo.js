@@ -9,7 +9,7 @@
   "main": "dist/index.js",
   "private": "true",
   "scripts": {
-    "start": "npm run build && node dist/index.js",
+    "start": "npm run build && node dist/run.js",
     "build": "tsc",
     "test": "npm run build && npm run test:run",
     "test:run": "mocha -r ts-node/register ./test/*.ts",
@@ -20,10 +20,14 @@
     "type": "git",
     "url": "https://github.com/larswaechter/bufferlo.js"
   },
+  "bugs": {
+    "url": "https://github.com/larswaechter/bufferlo.js/issues"
+  },
   "files": [
     "dist/**/*"
   ],
   "license": "MIT",
+  "types": "dist/index.d.ts",
   "devDependencies": {
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11.6",

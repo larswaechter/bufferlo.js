@@ -104,6 +104,19 @@ export default class Bufferlo {
     return this.write(content, this.index);
   }
 
+  appendToFile(cb?: (buffer: Bufferlo) => void): void {
+    if (!this.fd) throw new Error('No file descriptor set!');
+    fs.appendFile(this.fd, this.buffer, { encoding: this.encoding }, (err: Error) => {
+      if (err) throw err;
+      if (typeof cb === 'function') cb(this);
+    });
+  }
+
+  appendToFileSync(): void {
+    if (!this.fd) throw new Error('No file descriptor set!');
+    fs.appendFileSync(this.fd, this.buffer, { encoding: this.encoding });
+  }
+
   available() {
     return this.isBuffer() ? this.length - this.index : 0;
   }
@@ -182,7 +195,7 @@ export default class Bufferlo {
   }
 
   fromFile(cb: (buffer: Bufferlo) => void) {
-    if (!this.fd) throw new Error('No file descriptor found!');
+    if (!this.fd) throw new Error('No file descriptor set!');
     fs.readFile(this.fd, this.encoding, (err: Error, data: Buffer) => {
       if (err) throw err;
       this.buffer = Buffer.from(data);
@@ -192,7 +205,7 @@ export default class Bufferlo {
   }
 
   fromFileSync() {
-    if (!this.fd) throw new Error('No file descriptor found!');
+    if (!this.fd) throw new Error('No file descriptor set!');
     this.buffer = Buffer.from(fs.readFileSync(this.fd, this.encoding), this.encoding);
     this.index = this.buffer.length;
   }
@@ -314,7 +327,7 @@ export default class Bufferlo {
   }
 
   writeToFile(cb?: (buffer: Bufferlo) => void): void {
-    if (!this.fd) throw new Error('No file descriptor found!');
+    if (!this.fd) throw new Error('No file descriptor set!');
     fs.writeFile(this.fd, this.buffer, { encoding: this.encoding }, (err: Error) => {
       if (err) throw err;
       if (typeof cb === 'function') cb(this);
@@ -322,56 +335,7 @@ export default class Bufferlo {
   }
 
   writeToFileSync(): void {
-    if (!this.fd) throw new Error('No file descriptor found!');
+    if (!this.fd) throw new Error('No file descriptor set!');
     fs.writeFileSync(this.fd, this.buffer, { encoding: this.encoding });
   }
 }
-
-const bu = new Bufferlo();
-bu.allocBytes(3);
-bu.append('a');
-bu.append('b');
-bu.append('c');
-bu.moveIndex('start');
-bu.append('d');
-console.log(bu.buffer);
-
-/*
-const bu = new Bufferlo();
-bu.fromUtf8('a');
-console.log(bu.toJSON());
-bu.setOctal(0, '142');
-console.log(bu.toJSON());
-*/
-
-/*
-console.log(bu.buffer.readInt8());
-console.log(bu.toDecimal());
-console.log(bu.toHex());
-console.log(bu.toAscii());
-console.log(bu.toBinary());
-*/
-
-/*
-const a = Buffer.from([255, 254]);
-console.log(a, a.toString(), a[0]);
-
-const b = new Uint32Array([2, 4, 8]);
-console.log(b, b.length, b.byteLength);
-*/
-
-/*
-const bf = new Bufferlo();
-bf.allocBytes(3);
-bf.append('a');
-bf.append('b');
-
-for (const val of bf) console.log(val);
-
-const tmp = Buffer.alloc(3);
-tmp.write('c', 0);
-tmp.write('d', 1);
-for (const val of tmp) console.log(val);
-
-console.log(bf.buffer);
-*/
