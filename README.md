@@ -51,8 +51,8 @@ You can find the complete documentation including all available methods [here]()
 
 ## :octocat: Contributing
 
-See [CONTRIBUTING.md]()
+See [CONTRIBUTING.md](https://github.com/larswaechter/bufferlo.js/blob/master/CONTRIBUTING.md)
 
 ## 🔑 License
 
-[MIT]()
+[MIT](https://github.com/larswaechter/bufferlo.js/blob/master/LICENSE)
