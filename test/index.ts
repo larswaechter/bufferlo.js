@@ -52,11 +52,12 @@ describe('bufferlo.js', () => {
 
   it('append', () => {
     const bf = new Bufferlo();
-    bf.allocBytes(4);
+    bf.allocBytes(3);
     bf.append('a');
     bf.append('b');
     bf.append('c');
     assert.equal(bf.index, 3);
+    assert.throws(() => bf.append('d'));
   });
 
   it('available', () => {
@@ -132,11 +133,87 @@ describe('bufferlo.js', () => {
     const bf3 = new Bufferlo();
     bf3.allocBytes(1);
     bf3.append('c');
-
     bf1.concat(bf2, bf3);
+
     assert.equal(bf1.length, 3);
     assert.equal(bf1.at(0), 97);
     assert.equal(bf1.at(1), 98);
     assert.equal(bf1.at(2), 99);
+  });
+
+  it('copy', () => {
+    const bf1 = new Bufferlo();
+    bf1.allocBytes(4);
+    bf1.append('a');
+    bf1.append('b');
+    bf1.append('c');
+    bf1.append('d');
+
+    let bf2 = new Bufferlo();
+    bf2.allocBytes(4);
+    bf1.copy(bf2);
+    assert.equal(bf2.at(0), 97);
+    assert.equal(bf2.at(1), 98);
+    assert.equal(bf2.at(2), 99);
+    assert.equal(bf2.at(3), 100);
+
+    bf2 = new Bufferlo();
+    bf2.allocBytes(4);
+    bf1.copy(bf2, 1, 2, 4);
+    assert.equal(bf2.at(0), 0);
+    assert.equal(bf2.at(1), 99);
+    assert.equal(bf2.at(2), 100);
+    assert.equal(bf2.at(3), 0);
+  });
+
+  it('copyToIndex', () => {
+    const bf1 = new Bufferlo();
+    bf1.allocBytes(3);
+    bf1.append('a');
+    bf1.append('b');
+    bf1.append('c');
+
+    const bf2 = new Bufferlo();
+    bf2.allocBytes(3);
+    bf2.index = 1;
+    bf1.copyToIndex(bf2, 0, 2);
+    assert.equal(bf2.at(0), 0);
+    assert.equal(bf2.at(1), 97);
+    assert.equal(bf2.at(2), 98);
+  });
+
+  it('extend', () => {
+    const bf = new Bufferlo();
+    bf.allocBytes(4);
+    bf.append('a');
+    bf.append('b');
+    bf.extend(12);
+    assert.equal(bf.length, 16);
+    assert.equal(bf.at(0), 97);
+    assert.equal(bf.at(1), 98);
+  });
+
+  it('extend', () => {
+    const bf1 = new Bufferlo();
+    bf1.allocBytes(1);
+    bf1.append('a');
+
+    const bf2 = new Bufferlo();
+    bf2.allocBytes(1);
+    bf2.append('a');
+
+    const bf3 = new Bufferlo();
+    bf3.allocBytes(1);
+    bf3.append('b');
+
+    assert(bf1.equals(bf2));
+    assert(!bf1.equals(bf3));
+  });
+
+  it('fit', () => {
+    const bf = new Bufferlo();
+    bf.allocBytes(1);
+    assert(bf.fit('a'));
+    assert(!bf.fit('ab'));
   });
 });
