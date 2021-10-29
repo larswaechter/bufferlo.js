@@ -1,13 +1,11 @@
 import Bufferlo from '.';
 
 const bu = new Bufferlo();
-bu.allocBytes(3);
-bu.append('a');
-bu.append('b');
-bu.append('c');
-bu.moveIndex('start');
-bu.append('d');
-console.log(bu.buffer);
+bu.fromHex('abcd');
+console.log(bu);
+console.log(bu.at(0));
+
+console.log(Buffer.from('abc', 'hex'));
 
 /*
 const bu = new Bufferlo();

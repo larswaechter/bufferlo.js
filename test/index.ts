@@ -2,6 +2,7 @@ import 'mocha';
 import assert from 'assert';
 
 import Bufferlo from '../dist/index';
+import { buffer } from 'stream/consumers';
 
 describe('bufferlo.js', () => {
   it('decimalTo', () => {
@@ -32,19 +33,29 @@ describe('bufferlo.js', () => {
     const bf = new Bufferlo();
     assert.strictEqual(bf.isBuffer(), false);
     assert.strictEqual(bf.encoding, 'utf-8');
+    assert.strictEqual(bf.length, 0);
     assert.strictEqual(bf.index, 0);
+    assert.strictEqual(bf.fd, 0);
+  });
+
+  it('Non empty initialization', () => {
+    const bf = new Bufferlo('abc');
+    assert.strictEqual(bf.isBuffer(), true);
+    assert.strictEqual(bf.encoding, 'utf-8');
+    assert.strictEqual(bf.length, 3);
+    assert.strictEqual(bf.index, 3);
     assert.strictEqual(bf.fd, 0);
   });
 
   it('Buffer allocation', () => {
     let bf = new Bufferlo();
-    bf.allocBytes(1);
+    bf.alloc(1);
     assert.strictEqual(bf.length, 1);
     assert.strictEqual(bf.byteLength, 1);
     assert.strictEqual(bf.index, 0);
 
     bf = new Bufferlo();
-    bf.allocBytesUnsafe(1);
+    bf.allocUnsafe(1);
     assert.strictEqual(bf.length, 1);
     assert.strictEqual(bf.byteLength, 1);
     assert.strictEqual(bf.index, 0);
@@ -76,7 +87,7 @@ describe('bufferlo.js', () => {
 
   it('append', () => {
     const bf = new Bufferlo();
-    bf.allocBytes(3);
+    bf.alloc(3);
     bf.append('a');
     bf.append('b');
     bf.append('c');
@@ -87,7 +98,7 @@ describe('bufferlo.js', () => {
   it('available', () => {
     const bf = new Bufferlo();
     assert.strictEqual(bf.available(), 0);
-    bf.allocBytes(4);
+    bf.alloc(4);
     assert.strictEqual(bf.available(), 4);
     bf.append('a');
     assert.strictEqual(bf.available(), 3);
@@ -95,18 +106,24 @@ describe('bufferlo.js', () => {
 
   it('at', () => {
     const bf = new Bufferlo();
-    bf.allocBytes(3);
+    bf.alloc(3);
     bf.append('a');
     bf.append('b');
     bf.append('c');
     assert.strictEqual(bf.at(0), 97);
     assert.strictEqual(bf.at(1), 98);
     assert.strictEqual(bf.at(2), 99);
+    assert.strictEqual(bf.at(-1), 99);
+    assert.strictEqual(bf.at(-2), 98);
+    assert.strictEqual(bf.at(-3), 97);
+    assert.strictEqual(bf.at(0, 'binary'), '1100001');
+    assert.strictEqual(bf.at(1, 'octal'), '142');
+    assert.strictEqual(bf.at(2, 'hex'), '63');
   });
 
   it('clone', () => {
     const bf1 = new Bufferlo();
-    bf1.allocBytes(3);
+    bf1.alloc(3);
     bf1.append('a');
     bf1.append('b');
 
@@ -116,46 +133,46 @@ describe('bufferlo.js', () => {
     assert.strictEqual(bf1.index, bf2.index);
   });
 
-  it('closeFile', () => {
+  it('closeFile & openFile', () => {
     const bf = new Bufferlo();
     bf.openFile(__dirname + '/dummy.txt');
     assert(bf.fd > 0);
     bf.closeFile();
-    assert(bf.fd === 0);
+    assert.equal(bf.fd, 0);
   });
 
   it('compare', () => {
     const bf1 = new Bufferlo();
-    bf1.allocBytes(1);
+    bf1.alloc(1);
     bf1.append('a');
 
     const bf2 = new Bufferlo();
-    bf2.allocBytes(1);
+    bf2.alloc(1);
     bf2.append('a');
     assert(bf1.compare(bf2) === 0);
 
     const bf3 = new Bufferlo();
-    bf3.allocBytes(1);
+    bf3.alloc(1);
     bf3.append('b');
     assert(bf1.compare(bf3) === -1);
 
     const bf4 = new Bufferlo();
-    bf4.allocBytes(1);
+    bf4.alloc(1);
     bf4.append('c');
     assert(bf4.compare(bf1) === 1);
   });
 
   it('concat', () => {
     const bf1 = new Bufferlo();
-    bf1.allocBytes(1);
+    bf1.alloc(1);
     bf1.append('a');
 
     const bf2 = new Bufferlo();
-    bf2.allocBytes(1);
+    bf2.alloc(1);
     bf2.append('b');
 
     const bf3 = new Bufferlo();
-    bf3.allocBytes(1);
+    bf3.alloc(1);
     bf3.append('c');
     bf1.concat(bf2, bf3);
 
@@ -167,14 +184,14 @@ describe('bufferlo.js', () => {
 
   it('copy', () => {
     const bf1 = new Bufferlo();
-    bf1.allocBytes(4);
+    bf1.alloc(4);
     bf1.append('a');
     bf1.append('b');
     bf1.append('c');
     bf1.append('d');
 
     let bf2 = new Bufferlo();
-    bf2.allocBytes(4);
+    bf2.alloc(4);
     bf1.copy(bf2);
     assert.strictEqual(bf2.at(0), 97);
     assert.strictEqual(bf2.at(1), 98);
@@ -182,7 +199,7 @@ describe('bufferlo.js', () => {
     assert.strictEqual(bf2.at(3), 100);
 
     bf2 = new Bufferlo();
-    bf2.allocBytes(4);
+    bf2.alloc(4);
     bf1.copy(bf2, 1, 2, 4);
     assert.strictEqual(bf2.at(0), 0);
     assert.strictEqual(bf2.at(1), 99);
@@ -192,13 +209,13 @@ describe('bufferlo.js', () => {
 
   it('copyToIndex', () => {
     const bf1 = new Bufferlo();
-    bf1.allocBytes(3);
+    bf1.alloc(3);
     bf1.append('a');
     bf1.append('b');
     bf1.append('c');
 
     const bf2 = new Bufferlo();
-    bf2.allocBytes(3);
+    bf2.alloc(3);
     bf2.index = 1;
     bf1.copyToIndex(bf2, 0, 2);
     assert.strictEqual(bf2.at(0), 0);
@@ -208,7 +225,7 @@ describe('bufferlo.js', () => {
 
   it('extend', () => {
     const bf = new Bufferlo();
-    bf.allocBytes(4);
+    bf.alloc(4);
     bf.append('a');
     bf.append('b');
     bf.extend(12);
@@ -219,15 +236,15 @@ describe('bufferlo.js', () => {
 
   it('equals', () => {
     const bf1 = new Bufferlo();
-    bf1.allocBytes(1);
+    bf1.alloc(1);
     bf1.append('a');
 
     const bf2 = new Bufferlo();
-    bf2.allocBytes(1);
+    bf2.alloc(1);
     bf2.append('a');
 
     const bf3 = new Bufferlo();
-    bf3.allocBytes(1);
+    bf3.alloc(1);
     bf3.append('b');
 
     assert(bf1.equals(bf2));
@@ -236,8 +253,96 @@ describe('bufferlo.js', () => {
 
   it('fit', () => {
     const bf = new Bufferlo();
-    bf.allocBytes(1);
+    bf.alloc(1);
     assert(bf.fit('a'));
     assert(!bf.fit('ab'));
+  });
+
+  it('fromFile', () => {
+    const bf = new Bufferlo();
+    bf.openFile(__dirname + '/dummy.txt');
+    bf.fromFile((_bf) => {
+      assert.equal(_bf.length, 3);
+      assert.equal(_bf.index, 3);
+      assert.equal(_bf.at(0), 97);
+      assert.equal(_bf.at(1), 98);
+      assert.equal(_bf.at(2), 99);
+      _bf.closeFile();
+    });
+  });
+
+  it('fromFileSync', () => {
+    const bf = new Bufferlo();
+    bf.openFile(__dirname + '/dummy.txt');
+    bf.fromFileSync();
+    assert.equal(bf.length, 3);
+    assert.equal(bf.index, 3);
+    assert.equal(bf.at(0), 97);
+    assert.equal(bf.at(1), 98);
+    assert.equal(bf.at(2), 99);
+    bf.closeFile();
+  });
+
+  it('fromHex', () => {
+    const bf = new Bufferlo();
+    bf.fromHex('616263');
+    assert.equal(bf.length, 3);
+    assert.equal(bf.index, 3);
+    assert.equal(bf.toString(), '616263');
+  });
+
+  it('isBuffer', () => {
+    const bf = new Bufferlo();
+    assert(!bf.isBuffer());
+    bf.alloc(1);
+    assert(bf.isBuffer());
+  });
+
+  it('isEmpty', () => {
+    const bf = new Bufferlo();
+    bf.alloc(1);
+    assert(bf.isEmpty());
+    bf.write('a');
+    assert(!bf.isEmpty());
+  });
+
+  it('isFull', () => {
+    const bf = new Bufferlo();
+    bf.alloc(1);
+    assert(!bf.isFull());
+    bf.write('a');
+    assert(bf.isFull());
+  });
+
+  it('moveIndex', () => {
+    const bf = new Bufferlo();
+    bf.alloc(5);
+    bf.write('a');
+
+    bf.moveIndex('center');
+    assert.equal(bf.index, 2);
+    bf.moveIndex('end');
+    assert.equal(bf.index, bf.length - 1);
+    bf.moveIndex('empty');
+    assert.equal(bf.index, 1);
+    bf.moveIndex('start');
+    assert.equal(bf.index, 0);
+  });
+
+  it('set', () => {
+    const bf = new Bufferlo();
+    bf.alloc(1);
+
+    bf.set(0, 97);
+    assert.strictEqual(bf.at(0), 97);
+
+    bf.setBinary(0, '1010');
+    assert.strictEqual(bf.at(0), 10);
+
+    bf.setHex(0, 'ff');
+    assert.strictEqual(bf.at(0), 255);
+
+    bf.setOctal(0, '27');
+    assert.strictEqual(bf.at(0), 23);
   });
 });

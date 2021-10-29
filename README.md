@@ -13,7 +13,7 @@ bufferlo.js is TypeScript library that simplifies the work with Node's [Buffer](
 
 ## 💻 Installation
 
-Install via npm or yarn:
+Install via npm:
 
 ```bash
 npm i --save bufferlo.js
@@ -28,7 +28,7 @@ How to import bufferlo.js and how to use it. You can find all methods in the [do
 const Bufferlo = require('bufferlo.js');
 
 const bf = new Bufferlo();
-bf.allocBytes(3);
+bf.alloc(3);
 
 bf.append('a');
 bf.append('b');

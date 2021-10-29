@@ -61,13 +61,20 @@ export default class Bufferlo {
   }
 
   constructor(content?: string, encoding: BufferEncoding = 'utf-8') {
-    if (content) this._buffer = Buffer.from(content);
+    if (content) {
+      this._buffer = Buffer.from(content);
+      this.index = this.length;
+    }
     this._encoding = encoding;
   }
 
   private fixIndex() {
     if (this.index < 0) this.index = 0;
     if (this.index > this.length) this.index = this.length;
+  }
+
+  private setBase(index: number, value: string, base: number) {
+    this.buffer[index] = parseInt(value, base);
   }
 
   get buffer() {
@@ -108,37 +115,37 @@ export default class Bufferlo {
   }
 
   get length() {
-    return this.buffer.length;
+    return this.isBuffer() ? this.buffer.length : 0;
   }
 
   *[Symbol.iterator]() {
     return yield* this.buffer;
   }
 
-  allocBytes(n: number, fill: string | number | Buffer = 0) {
+  alloc(n: number, fill: string | number | Buffer = 0) {
     this.buffer = Buffer.alloc(n, fill, this.encoding);
     this.index = 0;
   }
 
-  allocBytesUnsafe(n: number) {
+  allocUnsafe(n: number) {
     this.buffer = Buffer.allocUnsafe(n);
     this.index = 0;
   }
 
   allocKiloBytes(n: number, fill: string | number | Buffer = 0) {
-    this.allocBytes(1024 * n, fill);
+    this.alloc(1024 * n, fill);
   }
 
   allocKiloBytesUnsafe(n: number) {
-    this.allocBytesUnsafe(1024 * n);
+    this.allocUnsafe(1024 * n);
   }
 
   allocMegaBytes(n: number, fill: string | number | Buffer = 0) {
-    this.allocBytes(Math.pow(1024, 2) * n, fill);
+    this.alloc(Math.pow(1024, 2) * n, fill);
   }
 
   allocMegaBytesUnsafe(n: number) {
-    this.allocBytesUnsafe(Math.pow(1024, 2) * n);
+    this.allocUnsafe(Math.pow(1024, 2) * n);
   }
 
   append(content: string) {
@@ -160,11 +167,18 @@ export default class Bufferlo {
   }
 
   available() {
-    return this.isBuffer() ? this.length - this.index : 0;
+    return this.length - this.index;
   }
 
-  at(index: number) {
-    return this.buffer[index];
+  at(index: number, format: 'binary' | 'decimal' | 'octal' | 'hex' = 'decimal') {
+    const fixedIndex = index < 0 ? this.length + index : index;
+    if (fixedIndex >= this.length) return undefined;
+    switch (format) {
+      case 'decimal':
+        return this.buffer[fixedIndex];
+      default:
+        return Bufferlo.decimalTo(this.buffer[fixedIndex], format);
+    }
   }
 
   clone() {
@@ -230,12 +244,6 @@ export default class Bufferlo {
     this.index = this.buffer.length;
   }
 
-  fromBinary(content: string) {
-    this.encoding = 'binary';
-    this.buffer = Buffer.from(content, this.encoding);
-    this.index = this.buffer.length;
-  }
-
   fromFile(cb: (buffer: Bufferlo) => void) {
     if (!this.fd) throw new Error('No file descriptor set!');
     fs.readFile(this.fd, this.encoding, (err: Error, data: Buffer) => {
@@ -254,12 +262,6 @@ export default class Bufferlo {
 
   fromHex(content: string) {
     this.encoding = 'hex';
-    this.buffer = Buffer.from(content, this.encoding);
-    this.index = this.buffer.length;
-  }
-
-  fromUtf8(content: string) {
-    this.encoding = 'utf-8';
     this.buffer = Buffer.from(content, this.encoding);
     this.index = this.buffer.length;
   }
@@ -285,7 +287,7 @@ export default class Bufferlo {
         this.index = Math.floor(this.length / 2);
         break;
       case 'end':
-        this.index = this.length;
+        this.index = Math.max(0, this.length - 1);
         break;
       case 'empty':
         this.index = this.buffer.indexOf(0);
@@ -299,10 +301,6 @@ export default class Bufferlo {
 
   set(index: number, value: number) {
     this.buffer[index] = value;
-  }
-
-  setBase(index: number, value: string, base: number = 10) {
-    this.buffer[index] = parseInt(value, base);
   }
 
   setBinary(index: number, value: string) {

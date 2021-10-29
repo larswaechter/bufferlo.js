@@ -14,7 +14,12 @@
     "test": "npm run build && npm run test:run",
     "test:run": "mocha -r ts-node/register ./test/*.ts",
     "prettier": "prettier --config ./.prettierrc --write ./src/index.ts",
-    "lint": "tslint -p tsconfig.json"
+    "lint": "tslint -p tsconfig.json",
+    "prepare": "npm run build",
+    "preversion": "npm run lint",
+    "version": "npm run prettier && npm run docs && git add -A src",
+    "postversion": "git push && git push --tags",
+    "prepublishOnly": "npm test && npm run lint"
   },
   "repository": {
     "type": "git",
@@ -28,6 +33,12 @@
   ],
   "license": "MIT",
   "types": "dist/index.d.ts",
+  "keywords": [
+    "buffer",
+    "buffers",
+    "nodejs",
+    "filesystem"
+  ],
   "devDependencies": {
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11.6",
