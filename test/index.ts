@@ -123,11 +123,13 @@ describe('bufferlo.js', () => {
 
   it('clone', () => {
     const bf1 = new Bufferlo();
+    bf1.fd = 1;
     bf1.alloc(3);
     bf1.append('a');
     bf1.append('b');
 
     const bf2 = bf1.clone();
+    assert.notStrictEqual(bf1.fd, bf2.fd);
     assert(bf1.equals(bf2));
     assert.strictEqual(bf1.encoding, bf2.encoding);
     assert.strictEqual(bf1.index, bf2.index);
@@ -344,5 +346,29 @@ describe('bufferlo.js', () => {
 
     bf.setOctal(0, '27');
     assert.strictEqual(bf.at(0), 23);
+  });
+
+  it('slice', () => {
+    const bf = new Bufferlo();
+    bf.alloc(4);
+    bf.write('abcd');
+
+    const sliced = bf.slice(1, 3);
+    assert.equal(sliced.length, 2);
+    assert.strictEqual(sliced[0], 98);
+    assert.strictEqual(sliced[1], 99);
+  });
+
+  it('toArray', () => {
+    const bf = new Bufferlo();
+    bf.alloc(4);
+    bf.write('abcd');
+
+    const arr = bf.toArray();
+    assert.equal(arr.length, 4);
+    assert.strictEqual(arr[0], 97);
+    assert.strictEqual(arr[1], 98);
+    assert.strictEqual(arr[2], 99);
+    assert.strictEqual(arr[3], 100);
   });
 });

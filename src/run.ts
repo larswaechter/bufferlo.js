@@ -1,11 +1,8 @@
 import Bufferlo from '.';
 
-const bu = new Bufferlo();
-bu.fromHex('abcd');
-console.log(bu);
-console.log(bu.at(0));
-
-console.log(Buffer.from('abc', 'hex'));
+const bu = new Bufferlo('abc');
+console.log(bu.toArray());
+console.log(bu.toUint8Array());
 
 /*
 const bu = new Bufferlo();
