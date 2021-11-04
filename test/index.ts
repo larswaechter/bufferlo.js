@@ -369,6 +369,81 @@ describe('bufferlo.js', () => {
     assert.strictEqual(arr[3], 100);
   });
 
+  it('toAscii', () => {
+    const bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+    assert.equal(bf.toAscii(), 'abc');
+  });
+
+  it('toBinary', () => {
+    const bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+    assert.equal(bf.toBinary(), '110000111000101100011');
+  });
+
+  it('toHex', () => {
+    const bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+    assert.equal(bf.toHex(), '616263');
+  });
+
+  it('toJSON', () => {
+    const bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+
+    const json = bf.toJSON();
+    assert.strictEqual(json.data[0], 97);
+    assert.strictEqual(json.data[1], 98);
+    assert.strictEqual(json.data[2], 99);
+  });
+
+  it('toOctal', () => {
+    const bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+    assert.equal(bf.toOctal(), '141142143');
+  });
+
+  it('toUtf8', () => {
+    const bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+    assert.equal(bf.toUtf8(), 'abc');
+  });
+
+  it('toUint8Array', () => {
+    const bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+
+    const arr = bf.toUint8Array();
+    assert.equal(arr.length, 3);
+    assert.equal(arr.byteLength, 3);
+    assert.equal(arr[0], 97);
+    assert.equal(arr[1], 98);
+    assert.equal(arr[2], 99);
+  });
+
+  it('toView', () => {
+    const bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+
+    let view = bf.toView();
+    assert.equal(view.byteLength, 3);
+    assert.equal(view.getInt8(0), 97);
+    assert.equal(view.getInt8(1), 98);
+    assert.equal(view.getInt8(2), 99);
+
+    view = bf.toView(1, 2);
+    assert.equal(view.byteLength, 1);
+    assert.equal(view.getInt8(0), 98);
+  });
+
   it('writeToFile', () => {
     const bf = new Bufferlo();
     bf.alloc(3);

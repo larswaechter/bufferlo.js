@@ -594,11 +594,11 @@ export default class Bufferlo {
    * @returns Binary string
    */
   toBinary() {
-    return this.toDecimal().toString(2);
+    return this.buffer.reduce((final, byte) => final + byte.toString(2), '');
   }
 
   /**
-   * Decodes the `Buffer` to a decimal number.
+   * Decodes the `Buffer` to a single decimal number.
    *
    * @returns Decimal number
    */
@@ -630,7 +630,7 @@ export default class Bufferlo {
    * @returns Octal string
    */
   toOctal() {
-    return this.toDecimal().toString(8);
+    return this.buffer.reduce((final, byte) => final + byte.toString(8), '');
   }
 
   /**
@@ -669,7 +669,7 @@ export default class Bufferlo {
    * @returns `DataView` representation
    */
   toView(offset: number = 0, length: number = this.length) {
-    return new DataView(this.buffer, offset, length);
+    return new DataView(this.buffer.buffer.slice(offset, length));
   }
 
   /**
