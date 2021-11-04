@@ -1,3 +1,5 @@
+Feel free to contribute to bufferlo.js:
+
 1. Create a fork
 2. Make your changes
 3. Run prettier: `npm run prettier`
