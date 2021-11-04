@@ -1,13 +1,14 @@
 {
   "name": "bufferlo.js",
   "version": "1.0.0",
-  "description": "A JavaScript library for the Node Buffer class.",
+  "description": "A TypeScript library built for the Node Buffer class.",
   "author": {
     "name": "Lars Wächter",
     "url": "https://larswaechter.dev/"
   },
   "main": "dist/index.js",
   "private": "true",
+  "homepage": "https://larswaechter.github.io/bufferlo.js/",
   "scripts": {
     "start": "npm run build && node dist/run.js",
     "build": "tsc",

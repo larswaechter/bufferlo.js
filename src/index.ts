@@ -76,12 +76,24 @@ export default class Bufferlo {
     }
   }
 
+  /**
+   * Creates a new `Bufferlo` instance by a given `Array`
+   *
+   * @param data - The `Array`
+   * @returns An new `Bufferlo` instance
+   */
   static ofArray(data: Uint8Array | ReadonlyArray<number>) {
     const bf = new Bufferlo();
     bf.buffer = Buffer.from(data);
     return bf;
   }
 
+  /**
+   * Creates a new `Bufferlo` instance by a given `ArrayBuffer`
+   *
+   * @param data - The `ArrayBuffer`
+   * @returns An new `Bufferlo` instance
+   */
   static ofArrayBuffer(arrayBuffer: WithImplicitCoercion<ArrayBuffer | SharedArrayBuffer>) {
     const bf = new Bufferlo();
     bf.buffer = Buffer.from(arrayBuffer);
@@ -96,11 +108,22 @@ export default class Bufferlo {
     this._encoding = encoding;
   }
 
+  /**
+   * Fix a broken index.
+   */
   private fixIndex() {
     if (this.index < 0) this.index = 0;
     if (this.index > this.length) this.index = this.length;
   }
 
+  /**
+   * Sets the byte at an given `index` to a given `value`.
+   * The `value` has to be in range 0-255.
+   *
+   * @param index - The byte's `index`
+   * @param value - The new `value`
+   * @param base - The base of the `value`'s numeral system
+   */
   private setBase(index: number, value: string, base: number) {
     this.buffer[index] = parseInt(value, base);
   }
@@ -492,7 +515,7 @@ export default class Bufferlo {
    * Sets the byte at an given `index` to a given `value`.
    * The `value` has to be in range 0-255.
    *
-   * @param index - The `Buffer` array index
+   * @param index - The byte's `index`
    * @param value - The new `value`
    */
   set(index: number, value: number) {
@@ -503,7 +526,7 @@ export default class Bufferlo {
    * Sets the byte at an given `index` to a given binary `value`.
    * The `value` has to be in range 0-255.
    *
-   * @param index - The `Buffer` array index
+   * @param index - The byte's `index`
    * @param value - The new `value` in binary
    */
   setBinary(index: number, value: string) {
@@ -515,7 +538,7 @@ export default class Bufferlo {
    * Sets the byte at an given `index` to the Unicode of a given `value`.
    * The Unicode is determined using `.charCodeAt()`.
    *
-   * @param index - The `Buffer` array index
+   * @param index - The byte's `index`
    * @param value - The new `value`
    */
   setChar(index: number, value: string) {
@@ -527,7 +550,7 @@ export default class Bufferlo {
    * Sets the byte at an given `index` to a given hex `value`.
    * The `value` has to be in range 0-255.
    *
-   * @param index - The `Buffer` array index
+   * @param index - The byte's `index`
    * @param value - The new `value` in hex
    */
   setHex(index: number, value: string) {
@@ -539,7 +562,7 @@ export default class Bufferlo {
    * Sets the byte at an given `index` to a given hex `value`.
    * The `value` has to be in range 0-255.
    *
-   * @param index - The `Buffer` array index
+   * @param index - The byte's `index`
    * @param value - The new `value` in hex
    */
   setOctal(index: number, value: string) {
@@ -611,7 +634,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Decodes The `Buffer` to a string according to the specified character encoding inencoding.
+   * Decodes the `Buffer` to a string according to the specified character encoding inencoding.
    *
    * @param encoding - The character encoding to use.
    * @returns Decoded string
@@ -630,7 +653,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Converts `Buffer` to `Uint8Array`.
+   * Converts the `Buffer` to a `Uint8Array`.
    *
    * @returns `Uint8Array` representation
    */
@@ -639,7 +662,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Converts ´Buffer` to `DataView`
+   * Converts the ´Buffer` to a `DataView`
    *
    * @param offset - The `Buffer` `offset`
    * @param length - The number of bytes

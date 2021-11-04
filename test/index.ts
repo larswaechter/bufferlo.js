@@ -376,12 +376,15 @@ describe('bufferlo.js', () => {
 
     const file = __dirname + '/tmp_a.txt';
     writeFileSync(file, 'abc', 'utf-8');
-    bf.openFile(file);
 
+    bf.openFile(file);
     bf.writeToFile((_bf) => {
       assert.equal(_bf.at(0), 120);
       assert.equal(_bf.at(1), 121);
       assert.equal(_bf.at(2), 122);
+
+      _bf.closeFile();
+
       unlinkSync(file);
     });
   });
@@ -393,9 +396,10 @@ describe('bufferlo.js', () => {
 
     const file = __dirname + '/tmp_b.txt';
     writeFileSync(file, 'abc', 'utf-8');
-    bf.openFile(file);
 
+    bf.openFile(file);
     bf.writeToFileSync();
+    bf.closeFile();
 
     assert.equal(bf.at(0), 120);
     assert.equal(bf.at(1), 121);

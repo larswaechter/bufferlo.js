@@ -1,6 +1,6 @@
 # bufferlo.js
 
-A TypeScript library for the Node Buffer class.
+A TypeScript library built for the Node Buffer class.
 
 [![NPM](https://nodei.co/npm/bufferlo.js.png)](https://nodei.co/npm/bufferlo.js/)
 
@@ -25,7 +25,7 @@ npm i --save bufferlo.js
 
 ## 🔨 Usage
 
-How to import bufferlo.js and how to use it. You can find all methods in the [docs]().
+How to import bufferlo.js and how to use it. You can find all methods in the [docs](https://larswaechter.github.io/bufferlo.js/).
 
 ```js
 // ES6: import Bufferlo from 'bufferlo.js';
@@ -52,7 +52,7 @@ bf.writeToFileSync(); // writes 'xyz' to dummy.txt
 
 ## 📚 Documentation
 
-You can find the complete documentation including all available methods [here]().
+You can find the complete documentation including all available methods [here](https://larswaechter.github.io/bufferlo.js/).
 
 ## 🧩 Contributing
 
