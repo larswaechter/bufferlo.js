@@ -7,10 +7,10 @@ export default class Bufferlo {
   private _index: number = 0;
 
   /**
-   * Convert the given decimal number to a target number system.
+   * Convert the given decimal number to a target numeral system.
    *
-   * @param decimal - The decimal number
-   * @param target - The target number system
+   * @param decimal - The `decimal` number
+   * @param target - The `target` numeral system
    * @returns Converted decimal number
    */
   static decimalTo(decimal: number, target: 'binary' | 'octal' | 'hex') {
@@ -25,10 +25,10 @@ export default class Bufferlo {
   }
 
   /**
-   * Convert the given binary string to a target number system.
+   * Convert the given binary string to a target numeral system.
    *
-   * @param binary - The binary string
-   * @param target - The target number system
+   * @param binary - The `binary` string
+   * @param target - The `target` numeral system
    * @returns Converted binary string
    */
   static binaryTo(binary: string, target: 'decimal' | 'octal' | 'hex') {
@@ -45,10 +45,10 @@ export default class Bufferlo {
   }
 
   /**
-   * Convert the given hex string to a target number system.
+   * Convert the given hex string to a target numeral system.
    *
-   * @param hex - The hex string
-   * @param target - The target number system
+   * @param hex - The `hex` string
+   * @param target - The `target` numeral system
    * @returns Converted hex string
    */
   static hexTo(hex: string, target: 'binary' | 'decimal' | 'octal') {
@@ -61,10 +61,10 @@ export default class Bufferlo {
   }
 
   /**
-   * Convert the given octal string to a target number system.
+   * Convert the given octal string to a target numeral system.
    *
-   * @param octal - The octal string
-   * @param target - The target number system
+   * @param octal - The `octal` string
+   * @param target - The `target` numeral system
    * @returns Converted octal string
    */
   static octalTo(octal: string, target: 'binary' | 'decimal' | 'hex') {
@@ -216,7 +216,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Append the given content to the `Buffer`, starting from the current `index` position.
+   * Appends the given content to the `Buffer`, starting from the current `index` position.
    * The `index` is increased by the number of written bytes.
    *
    * @param content - The content to append
@@ -228,7 +228,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Append the Buffer content to the current open `fd`.
+   * Appends the Buffer content to the current opened file. A `fd` must be set.
    */
   appendToFile(cb?: (buffer: Bufferlo) => void): void {
     if (!this.fd) throw new Error('No file descriptor set!');
@@ -239,7 +239,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Append the Buffer content to the current open `fd` synchronously.
+   * Appends the Buffer content to the current opened file synchronously. A `fd` must be set.
    */
   appendToFileSync(): void {
     if (!this.fd) throw new Error('No file descriptor set!');
@@ -247,34 +247,35 @@ export default class Bufferlo {
   }
 
   /**
-   * Get the number of unwritten bytes, which depends on the current `index` position and the Buffer `size`.
+   * Gets the number of unwritten bytes, which depends on the current `index` position and the `size`.
    *
-   * @returns
+   * @returns Number of unwritten bytes
    */
   available() {
     return this.length - this.index;
   }
 
   /**
-   * Get the byte at an given index.
+   * Gets the byte at an given `index` in a given numeral `system`.
+   * Use an negative `index` to start from the `Buffer` end.
    *
-   * @param index - The `Buffer` array index
-   * @param format - The number system of the return value
+   * @param index - The `Buffer` position
+   * @param system - The numeral `system` of the return value
    * @returns The byte at this index
    */
-  at(index: number, format: 'binary' | 'decimal' | 'octal' | 'hex' = 'decimal') {
+  at(index: number, system: 'binary' | 'decimal' | 'octal' | 'hex' = 'decimal') {
     const fixedIndex = index < 0 ? this.length + index : index;
     if (fixedIndex >= this.length) return undefined;
-    switch (format) {
+    switch (system) {
       case 'decimal':
         return this.buffer[fixedIndex];
       default:
-        return Bufferlo.decimalTo(this.buffer[fixedIndex], format);
+        return Bufferlo.decimalTo(this.buffer[fixedIndex], system);
     }
   }
 
   /**
-   * Clone the current instance. The `fd` attribute is not copied.
+   * Clones the current instance. The `fd` attribute is not copied.
    *
    * @returns New `Bufferlo` instance
    */
@@ -288,7 +289,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Close the current open `fd.`.
+   * Closes the current opened file (`fd`).
    */
   closeFile() {
     fs.closeSync(this.fd);
@@ -296,13 +297,13 @@ export default class Bufferlo {
   }
 
   /**
-   * Compare with a given `Buffer`.
+   * Compares with a given `Bufferlo` instance.
    *
    * * `0` is returned if target is the same
    * * `1` is returned if target should come before
    * * `-1` is returned if target should come after
    *
-   * @param buffer - The `Buffer` to compare
+   * @param buffer - The `Bufferlo` instance to compare
    * @returns
    */
   compare(buffer: Bufferlo) {
@@ -310,18 +311,18 @@ export default class Bufferlo {
   }
 
   /**
-   * Concat with a list of given `Buffers`.
+   * Concats `Buffer` with a list of given `Bufferlo` instances.
    *
-   * @param list - The `Buffers` to concat
+   * @param list - The `Buffer` instances to concat
    */
   concat(...list: Bufferlo[]): void {
     this.buffer = Buffer.concat([this.buffer, ...list.map((bf) => bf.buffer)]);
   }
 
   /**
-   * Copy the `Buffer` content to a given `target`.
+   * Copies the `Buffer` content to a given `target`.
    *
-   * @param buffer - Target `Buffer`
+   * @param buffer - Target `Buffer` instance
    * @param targetStart - The target `Buffer` starting position
    * @param sourceStart - The source `Buffer` starting position
    * @param sourceEnd - The source `Buffer` ending position
@@ -337,7 +338,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Copy the `Buffer` content to a given `target` starting at the `target`'s index.
+   * Copies the `Buffer` content to a given `target` starting at the `target`'s index.
    *
    * @param buffer - The target `Buffer`
    * @param sourceStart - The source `Buffer` starting position
@@ -349,24 +350,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Copy the `Buffer` content to a given file.
-   * Use this method if you don't want to write to the current open `fd`.
-   *
-   * @param path - The file path
-   * @param cb - The callback when the file is written
-   */
-  copyToFile(path: string, cb?: () => void) {
-    fs.open(path, 'w', (err: Error, fd: number) => {
-      if (err) throw err;
-      fs.writeFile(fd, this.buffer, { encoding: this.encoding }, (_err: Error) => {
-        if (_err) throw err;
-        if (typeof cb === 'function') cb();
-      });
-    });
-  }
-
-  /**
-   * Extend the `Buffer` by a given `size`.
+   * Extends the `Buffer` by a given `size`.
    *
    * @param size - The size to extend
    */
@@ -375,7 +359,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Compare the bytes with given `Buffer`.
+   * Compares the bytes with given `Bufferlo` instance.
    *
    * @param bufferlo - The `Buffer` to compare
    * @returns `True` if all bytes equal, otherwise `false`
@@ -385,8 +369,8 @@ export default class Bufferlo {
   }
 
   /**
-   * Check whether the given `content` fits into the `Buffer`.
-   * The content `fits` if enough bytes unwritten.
+   * Checks whether the given `content` fits into the `Buffer`.
+   * The content `fits` if enough bytes are unwritten.
    *
    * @param content - The `content` to check
    * @returns `True` if the `content` fits, otherwise `false`
@@ -396,7 +380,8 @@ export default class Bufferlo {
   }
 
   /**
-   * Initialize the `Buffer` from a given Ascii `string`.
+   * Initializes the `Buffer` from a given Ascii `string`.
+   * Sets the `encoding` to ASCII.
    *
    * @param content - The `content` for the initialization
    */
@@ -407,7 +392,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Initialize the `Buffer` from the current open `fd`.
+   * Initializes the `Buffer` from the current opened file (`fd`).
    *
    * @param cb - The callback when the `Buffer` is initialized
    */
@@ -422,7 +407,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Initialize the `Buffer` from the current open `fd` synchronously.
+   * Initializes the `Buffer` from the current open file (`fd`) synchronously.
    */
   fromFileSync() {
     if (!this.fd) throw new Error('No file descriptor set!');
@@ -431,7 +416,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Initialize the `Buffer` from a given hex `string`.
+   * Initializes the `Buffer` from a given hex `string`.
    *
    * @param content - The hex `content` for the initialization
    */
@@ -442,7 +427,7 @@ export default class Bufferlo {
   }
 
   /**
-   * Check whether a valid `Buffer` is set.
+   * Checks whether a valid `Buffer` is set.
    *
    * @returns `True` if a valid `Buffer` is set, otherwise ´false`
    */
@@ -451,7 +436,8 @@ export default class Bufferlo {
   }
 
   /**
-   * Check whether the `Buffer` is empty. The `Buffer` is empty if the `index` is `0`.
+   * Checks whether the `Buffer` is empty.
+   * The `Buffer` is empty if the `index` is at position `0`.
    *
    * @returns `True` if the `Buffer` is empty, otherwise `false`
    */
@@ -460,7 +446,8 @@ export default class Bufferlo {
   }
 
   /**
-   * Check whether the `Buffer` is full. The `Buffer` is full if the `index` equals the `Buffer` length.
+   * Checks whether the `Buffer` is full.
+   * The `Buffer` is full if the `index` equals the `Buffer` length.
    *
    * @returns `True` if the `Buffer` is full, otherwise `false`
    */
@@ -469,7 +456,8 @@ export default class Bufferlo {
   }
 
   /**
-   * Move the `index` to a given `position`. For setting the `index` to a fix number use the `index` attribute.
+   * Moves the `index` to a given `position`.
+   * Use the `index` attribute for setting a fixed number.
    *
    * @param position - The target `position`
    */
@@ -491,17 +479,18 @@ export default class Bufferlo {
   }
 
   /**
-   * Open a given file and update the `fd` to it.
+   * Opens a given file and set the `fd` to it.
    *
    * @param path - The file to open
    * @param mode - The file's `OpenMode`
    */
-  openFile(path: string, mode: fs.OpenMode = 'r+') {
+  openFile(path: fs.PathLike, mode: fs.OpenMode = 'r+') {
     this.fd = fs.openSync(path, mode);
   }
 
   /**
-   * Set the byte at an given `index` to a given `value`.
+   * Sets the byte at an given `index` to a given `value`.
+   * The `value` has to be in range 0-255.
    *
    * @param index - The `Buffer` array index
    * @param value - The new `value`
@@ -511,89 +500,173 @@ export default class Bufferlo {
   }
 
   /**
-   * Set the byte at an given `index` to a given binary `value`.
+   * Sets the byte at an given `index` to a given binary `value`.
+   * The `value` has to be in range 0-255.
    *
    * @param index - The `Buffer` array index
    * @param value - The new `value` in binary
    */
   setBinary(index: number, value: string) {
+    if (!new RegExp(/^[0-1]+$/g).test(value)) throw new Error('No valid binary value provided!');
     this.setBase(index, value, 2);
   }
 
   /**
-   * Set the byte at an given `index` to a given hex `value`.
+   * Sets the byte at an given `index` to the Unicode of a given `value`.
+   * The Unicode is determined using `.charCodeAt()`.
+   *
+   * @param index - The `Buffer` array index
+   * @param value - The new `value`
+   */
+  setChar(index: number, value: string) {
+    if (!value.length) throw new Error('Invalid char value provided!');
+    this.buffer[index] = value.charCodeAt(0);
+  }
+
+  /**
+   * Sets the byte at an given `index` to a given hex `value`.
+   * The `value` has to be in range 0-255.
    *
    * @param index - The `Buffer` array index
    * @param value - The new `value` in hex
    */
   setHex(index: number, value: string) {
+    if (!new RegExp(/^[0-9a-fA-F]+$/g).test(value)) throw new Error('No valid hex value provided!');
     this.setBase(index, value, 16);
   }
 
   /**
-   * Set the byte at an given `index` to a given hex `value`.
+   * Sets the byte at an given `index` to a given hex `value`.
+   * The `value` has to be in range 0-255.
    *
    * @param index - The `Buffer` array index
    * @param value - The new `value` in hex
    */
   setOctal(index: number, value: string) {
+    if (!new RegExp(/^[0-7]+$/g).test(value)) throw new Error('No valid octal value provided!');
     this.setBase(index, value, 8);
   }
 
-  slice(start: number = 0, end: number = this.length) {
-    return this.buffer.slice(start, end);
-  }
-
+  /**
+   * Converts the `Buffer` to an `Array`.
+   *
+   * @returns The `Buffer` as `Array`
+   */
   toArray() {
     return [...this.buffer];
   }
 
+  /**
+   * Decodes the `Buffer` to an ASCII string.
+   *
+   * @returns ASCII string
+   */
   toAscii() {
     return this.toString('ascii');
   }
 
+  /**
+   * Decodes the `Buffer` to a binary string.
+   *
+   * @returns Binary string
+   */
   toBinary() {
     return this.toDecimal().toString(2);
   }
 
+  /**
+   * Decodes the `Buffer` to a decimal number.
+   *
+   * @returns Decimal number
+   */
   toDecimal() {
     return parseInt(this.toHex(), 16);
   }
 
+  /**
+   * Decodes the `Buffer` to a hex string.
+   *
+   * @returns Hex string
+   */
   toHex() {
     return this.toString('hex');
   }
 
+  /**
+   * Returns a JSON representation of the `Buffer`.
+   *
+   * @returns JSON representation
+   */
   toJSON() {
     return this.buffer.toJSON();
   }
 
+  /**
+   * Decodes the `Buffer` to an octal string.
+   *
+   * @returns Octal string
+   */
   toOctal() {
     return this.toDecimal().toString(8);
   }
 
+  /**
+   * Decodes The `Buffer` to a string according to the specified character encoding inencoding.
+   *
+   * @param encoding - The character encoding to use.
+   * @returns Decoded string
+   */
   toString(encoding: BufferEncoding = this.encoding) {
     return this.buffer.toString(encoding);
   }
 
+  /**
+   * Decodes the `Buffer` to an UTF-8 string.
+   *
+   * @returns UTF-8 string
+   */
   toUtf8() {
     return this.toString('utf-8');
   }
 
+  /**
+   * Converts `Buffer` to `Uint8Array`.
+   *
+   * @returns `Uint8Array` representation
+   */
   toUint8Array() {
     return new Uint8Array(this.buffer);
   }
 
+  /**
+   * Converts ´Buffer` to `DataView`
+   *
+   * @param offset - The `Buffer` `offset`
+   * @param length - The number of bytes
+   * @returns `DataView` representation
+   */
   toView(offset: number = 0, length: number = this.length) {
     return new DataView(this.buffer, offset, length);
   }
 
+  /**
+   * Writes the given `content` to the `Buffer` starting from `offset`.
+   *
+   * @param content - The `content` to write
+   * @param offset - The `offset` in bytes
+   * @returns The number of written bytes
+   */
   write(content: string, offset: number = 0): number {
     const n = this.buffer.write(content, offset, this.encoding);
     this.index = offset + n;
     return n;
   }
 
+  /**
+   * Writes the `Buffer` content to the current opened file. A `fd` must be set.
+   *
+   * @param cb - The callback when the file is written
+   */
   writeToFile(cb?: (buffer: Bufferlo) => void): void {
     if (!this.fd) throw new Error('No file descriptor set!');
     fs.writeFile(this.fd, this.buffer, { encoding: this.encoding }, (err: Error) => {
@@ -602,6 +675,9 @@ export default class Bufferlo {
     });
   }
 
+  /**
+   * Writes the `Buffer` content to the current opened file synchronously. A `fd` must be set.
+   */
   writeToFileSync(): void {
     if (!this.fd) throw new Error('No file descriptor set!');
     fs.writeFileSync(this.fd, this.buffer, { encoding: this.encoding });

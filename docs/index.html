@@ -1,0 +1,47 @@
+<!DOCTYPE html><html class="default no-js"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>bufferlo.js</title><meta name="description" content="Documentation for bufferlo.js"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><script>document.body.classList.add(localStorage.getItem("tsd-theme") || "os")</script><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">bufferlo.js</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label><input type="checkbox" id="tsd-filter-externals" checked/><label class="tsd-widget" for="tsd-filter-externals">Externals</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>bufferlo.js</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#bufferlojs" id="bufferlojs" style="color: inherit; text-decoration: none;">
+  <h1>bufferlo.js</h1>
+</a>
+<p>A TypeScript library for the Node Buffer class.</p>
+<p><a href="https://nodei.co/npm/bufferlo.js/"><img src="https://nodei.co/npm/bufferlo.js.png" alt="NPM"></a></p>
+<p><img src="https://github.com/larswaechter/bufferlo.js/actions/workflows/tests.yaml/badge.svg" alt="Tests">
+<img src="https://github.com/larswaechter/bufferlo.js/actions/workflows/linter.yaml/badge.svg" alt="Linter"></p>
+
+<a href="#introduction" id="introduction" style="color: inherit; text-decoration: none;">
+  <h2>Introduction</h2>
+</a>
+<p>bufferlo.js is TypeScript library that simplifies the work with Node&#39;s <a href="https://nodejs.org/api/buffer.html">Buffer</a> class. It uses a <code>Buffer</code> instance under the hood and provides multiple methods to interact with this buffer.</p>
+<p>What are Buffers? (<a href="https://nodejs.org/en/knowledge/advanced/buffers/how-to-use-buffers/">Source</a>)</p>
+<blockquote>
+<p>The <code>Buffer</code> class in Node.js is designed to handle raw binary data. Each buffer corresponds to some raw memory allocated outside V8. Buffers act somewhat like arrays of integers, but aren&#39;t resizable and have a whole bunch of methods specifically for binary data. The integers in a buffer each represent a byte and so are limited to values from 0 to 255 inclusive.</p>
+</blockquote>
+
+<a href="#💻-installation" id="💻-installation" style="color: inherit; text-decoration: none;">
+  <h2>💻 Installation</h2>
+</a>
+<p>Install via npm:</p>
+<pre><code class="language-bash"><span class="hl-0">npm i --save bufferlo.js</span>
+</code></pre>
+
+<a href="#🔨-usage" id="🔨-usage" style="color: inherit; text-decoration: none;">
+  <h2>🔨 Usage</h2>
+</a>
+<p>How to import bufferlo.js and how to use it. You can find all methods in the <a href="">docs</a>.</p>
+<pre><code class="language-js"><span class="hl-1">// ES6: import Bufferlo from &#39;bufferlo.js&#39;;</span><br/><span class="hl-2">const</span><span class="hl-0"> </span><span class="hl-3">Bufferlo</span><span class="hl-0"> = </span><span class="hl-4">require</span><span class="hl-0">(</span><span class="hl-5">&#39;bufferlo.js&#39;</span><span class="hl-0">);</span><br/><br/><span class="hl-2">const</span><span class="hl-0"> </span><span class="hl-3">bf</span><span class="hl-0"> = </span><span class="hl-2">new</span><span class="hl-0"> </span><span class="hl-4">Bufferlo</span><span class="hl-0">();</span><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-4">alloc</span><span class="hl-0">(</span><span class="hl-7">3</span><span class="hl-0">);</span><br/><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-4">append</span><span class="hl-0">(</span><span class="hl-5">&#39;a&#39;</span><span class="hl-0">);</span><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-4">append</span><span class="hl-0">(</span><span class="hl-5">&#39;b&#39;</span><span class="hl-0">);</span><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-4">available</span><span class="hl-0">(); </span><span class="hl-1">// 1 byte</span><br/><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-4">write</span><span class="hl-0">(</span><span class="hl-5">&#39;xyz&#39;</span><span class="hl-0">);</span><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-4">fit</span><span class="hl-0">(</span><span class="hl-5">&#39;a&#39;</span><span class="hl-0">); </span><span class="hl-1">// false</span><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-4">available</span><span class="hl-0">(); </span><span class="hl-1">// 0 bytes</span><br/><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-4">extend</span><span class="hl-0">(</span><span class="hl-7">5</span><span class="hl-0">);</span><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-6">length</span><span class="hl-0">; </span><span class="hl-1">// 8 bytes</span><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-4">available</span><span class="hl-0">(); </span><span class="hl-1">// 5 bytes</span><br/><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-4">openFile</span><span class="hl-0">(</span><span class="hl-5">&#39;./dummy.txt&#39;</span><span class="hl-0">);</span><br/><span class="hl-6">bf</span><span class="hl-0">.</span><span class="hl-4">writeToFileSync</span><span class="hl-0">(); </span><span class="hl-1">// writes &#39;xyz&#39; to dummy.txt</span>
+</code></pre>
+
+<a href="#📚-documentation" id="📚-documentation" style="color: inherit; text-decoration: none;">
+  <h2>📚 Documentation</h2>
+</a>
+<p>You can find the complete documentation including all available methods <a href="">here</a>.</p>
+
+<a href="#🧩-contributing" id="🧩-contributing" style="color: inherit; text-decoration: none;">
+  <h2>🧩 Contributing</h2>
+</a>
+<p>See <a href="https://github.com/larswaechter/bufferlo.js/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a></p>
+
+<a href="#🔑-license" id="🔑-license" style="color: inherit; text-decoration: none;">
+  <h2>🔑 License</h2>
+</a>
+<p>bufferlo.js is released under <a href="https://github.com/larswaechter/bufferlo.js/blob/master/LICENSE">MIT</a> license.</p>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class"><a href="classes/default.html" class="tsd-kind-icon">default</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li><li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>

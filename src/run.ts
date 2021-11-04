@@ -1,8 +1,9 @@
 import Bufferlo from '.';
 
 const bu = new Bufferlo('abc');
-console.log(bu.toArray());
-console.log(bu.toUint8Array());
+bu.alloc(4);
+bu.set(0, 255);
+console.log(bu);
 
 /*
 const bu = new Bufferlo();

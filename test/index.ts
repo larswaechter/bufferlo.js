@@ -1,8 +1,8 @@
 import 'mocha';
 import assert from 'assert';
+import { unlinkSync, writeFileSync } from 'fs';
 
 import Bufferlo from '../dist/index';
-import { buffer } from 'stream/consumers';
 
 describe('bufferlo.js', () => {
   it('decimalTo', () => {
@@ -137,7 +137,7 @@ describe('bufferlo.js', () => {
 
   it('closeFile & openFile', () => {
     const bf = new Bufferlo();
-    bf.openFile(__dirname + '/dummy.txt');
+    bf.openFile(__dirname + '/tmp.txt');
     assert(bf.fd > 0);
     bf.closeFile();
     assert.equal(bf.fd, 0);
@@ -195,10 +195,12 @@ describe('bufferlo.js', () => {
     let bf2 = new Bufferlo();
     bf2.alloc(4);
     bf1.copy(bf2);
-    assert.strictEqual(bf2.at(0), 97);
-    assert.strictEqual(bf2.at(1), 98);
-    assert.strictEqual(bf2.at(2), 99);
-    assert.strictEqual(bf2.at(3), 100);
+
+    bf1.set(0, 101);
+    assert.notStrictEqual(bf1.at(0), bf2.at(0));
+    assert.strictEqual(bf1.at(1), bf2.at(1));
+    assert.strictEqual(bf1.at(2), bf2.at(2));
+    assert.strictEqual(bf1.at(3), bf2.at(3));
 
     bf2 = new Bufferlo();
     bf2.alloc(4);
@@ -262,7 +264,7 @@ describe('bufferlo.js', () => {
 
   it('fromFile', () => {
     const bf = new Bufferlo();
-    bf.openFile(__dirname + '/dummy.txt');
+    bf.openFile(__dirname + '/tmp.txt');
     bf.fromFile((_bf) => {
       assert.equal(_bf.length, 3);
       assert.equal(_bf.index, 3);
@@ -275,7 +277,7 @@ describe('bufferlo.js', () => {
 
   it('fromFileSync', () => {
     const bf = new Bufferlo();
-    bf.openFile(__dirname + '/dummy.txt');
+    bf.openFile(__dirname + '/tmp.txt');
     bf.fromFileSync();
     assert.equal(bf.length, 3);
     assert.equal(bf.index, 3);
@@ -340,23 +342,18 @@ describe('bufferlo.js', () => {
 
     bf.setBinary(0, '1010');
     assert.strictEqual(bf.at(0), 10);
+    assert.throws(() => bf.setBinary(0, '1012'));
+
+    bf.setChar(0, 'a');
+    assert.strictEqual(bf.at(0), 97);
 
     bf.setHex(0, 'ff');
     assert.strictEqual(bf.at(0), 255);
+    assert.throws(() => bf.setHex(0, 'defg'));
 
     bf.setOctal(0, '27');
     assert.strictEqual(bf.at(0), 23);
-  });
-
-  it('slice', () => {
-    const bf = new Bufferlo();
-    bf.alloc(4);
-    bf.write('abcd');
-
-    const sliced = bf.slice(1, 3);
-    assert.equal(sliced.length, 2);
-    assert.strictEqual(sliced[0], 98);
-    assert.strictEqual(sliced[1], 99);
+    assert.throws(() => bf.setOctal(0, '142801'));
   });
 
   it('toArray', () => {
@@ -370,5 +367,40 @@ describe('bufferlo.js', () => {
     assert.strictEqual(arr[1], 98);
     assert.strictEqual(arr[2], 99);
     assert.strictEqual(arr[3], 100);
+  });
+
+  it('writeToFile', () => {
+    const bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('xyz');
+
+    const file = __dirname + '/tmp_a.txt';
+    writeFileSync(file, 'abc', 'utf-8');
+    bf.openFile(file);
+
+    bf.writeToFile((_bf) => {
+      assert.equal(_bf.at(0), 120);
+      assert.equal(_bf.at(1), 121);
+      assert.equal(_bf.at(2), 122);
+      unlinkSync(file);
+    });
+  });
+
+  it('writeToFileSync', () => {
+    const bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('xyz');
+
+    const file = __dirname + '/tmp_b.txt';
+    writeFileSync(file, 'abc', 'utf-8');
+    bf.openFile(file);
+
+    bf.writeToFileSync();
+
+    assert.equal(bf.at(0), 120);
+    assert.equal(bf.at(1), 121);
+    assert.equal(bf.at(2), 122);
+
+    unlinkSync(file);
   });
 });
