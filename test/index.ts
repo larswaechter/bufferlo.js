@@ -31,74 +31,76 @@ describe('bufferlo.js', () => {
 
   it('Empty initialization', () => {
     const bf = new Bufferlo();
-    assert.strictEqual(bf.isBuffer(), false);
-    assert.strictEqual(bf.encoding, 'utf-8');
-    assert.strictEqual(bf.length, 0);
-    assert.strictEqual(bf.index, 0);
-    assert.strictEqual(bf.fd, 0);
+    assert.equal(bf.isBuffer(), false);
+    assert.equal(bf.encoding, 'utf-8');
+    assert.equal(bf.length, 0);
+    assert.equal(bf.byteLength, 0);
+    assert.equal(bf.index, 0);
+    assert.equal(bf.fd, 0);
   });
 
   it('Non empty initialization', () => {
     const bf = new Bufferlo('abc');
-    assert.strictEqual(bf.isBuffer(), true);
-    assert.strictEqual(bf.encoding, 'utf-8');
-    assert.strictEqual(bf.length, 3);
-    assert.strictEqual(bf.index, 3);
-    assert.strictEqual(bf.fd, 0);
+    assert.equal(bf.isBuffer(), true);
+    assert.equal(bf.encoding, 'utf-8');
+    assert.equal(bf.length, 3);
+    assert.equal(bf.byteLength, 3);
+    assert.equal(bf.index, 3);
+    assert.equal(bf.fd, 0);
   });
 
   it('Buffer allocation', () => {
     let bf = new Bufferlo();
     bf.alloc(1);
-    assert.strictEqual(bf.length, 1);
-    assert.strictEqual(bf.byteLength, 1);
-    assert.strictEqual(bf.index, 0);
+    assert.equal(bf.length, 1);
+    assert.equal(bf.byteLength, 1);
+    assert.equal(bf.index, 0);
 
     bf = new Bufferlo();
     bf.allocUnsafe(1);
-    assert.strictEqual(bf.length, 1);
-    assert.strictEqual(bf.byteLength, 1);
-    assert.strictEqual(bf.index, 0);
+    assert.equal(bf.length, 1);
+    assert.equal(bf.byteLength, 1);
+    assert.equal(bf.index, 0);
 
     bf = new Bufferlo();
     bf.allocKiloBytes(1);
-    assert.strictEqual(bf.length, 1024);
-    assert.strictEqual(bf.byteLength, 1024);
-    assert.strictEqual(bf.index, 0);
+    assert.equal(bf.length, 1024);
+    assert.equal(bf.byteLength, 1024);
+    assert.equal(bf.index, 0);
 
     bf = new Bufferlo();
     bf.allocKiloBytesUnsafe(1);
-    assert.strictEqual(bf.length, 1024);
-    assert.strictEqual(bf.byteLength, 1024);
-    assert.strictEqual(bf.index, 0);
+    assert.equal(bf.length, 1024);
+    assert.equal(bf.byteLength, 1024);
+    assert.equal(bf.index, 0);
 
     bf = new Bufferlo();
     bf.allocMegaBytes(1);
-    assert.strictEqual(bf.length, 1048576);
-    assert.strictEqual(bf.byteLength, 1048576);
-    assert.strictEqual(bf.index, 0);
+    assert.equal(bf.length, 1048576);
+    assert.equal(bf.byteLength, 1048576);
+    assert.equal(bf.index, 0);
 
     bf = new Bufferlo();
     bf.allocMegaBytesUnsafe(1);
-    assert.strictEqual(bf.length, 1048576);
-    assert.strictEqual(bf.byteLength, 1048576);
-    assert.strictEqual(bf.index, 0);
+    assert.equal(bf.length, 1048576);
+    assert.equal(bf.byteLength, 1048576);
+    assert.equal(bf.index, 0);
   });
 
   it('ofArray', () => {
     const bf = Bufferlo.ofArray([97, 98, 99]);
-    assert.strictEqual(bf.isBuffer(), true);
-    assert.strictEqual(bf.encoding, 'utf-8');
-    assert.strictEqual(bf.length, 3);
-    assert.strictEqual(bf.index, 3);
+    assert.equal(bf.isBuffer(), true);
+    assert.equal(bf.encoding, 'utf-8');
+    assert.equal(bf.length, 3);
+    assert.equal(bf.index, 3);
   });
 
   it('ofArrayBuffer', () => {
     const bf = Bufferlo.ofArrayBuffer(new Uint8Array([97, 98, 99]));
-    assert.strictEqual(bf.isBuffer(), true);
-    assert.strictEqual(bf.encoding, 'utf-8');
-    assert.strictEqual(bf.length, 3);
-    assert.strictEqual(bf.index, 3);
+    assert.equal(bf.isBuffer(), true);
+    assert.equal(bf.encoding, 'utf-8');
+    assert.equal(bf.length, 3);
+    assert.equal(bf.index, 3);
   });
 
   it('append', () => {
@@ -107,17 +109,17 @@ describe('bufferlo.js', () => {
     bf.append('a');
     bf.append('b');
     bf.append('c');
-    assert.strictEqual(bf.index, 3);
+    assert.equal(bf.index, 3);
     assert.throws(() => bf.append('d'));
   });
 
   it('available', () => {
     const bf = new Bufferlo();
-    assert.strictEqual(bf.available(), 0);
+    assert.equal(bf.available(), 0);
     bf.alloc(4);
-    assert.strictEqual(bf.available(), 4);
+    assert.equal(bf.available(), 4);
     bf.append('a');
-    assert.strictEqual(bf.available(), 3);
+    assert.equal(bf.available(), 3);
   });
 
   it('at', () => {
@@ -145,10 +147,10 @@ describe('bufferlo.js', () => {
     bf1.append('b');
 
     const bf2 = bf1.clone();
-    assert.notStrictEqual(bf1.fd, bf2.fd);
+    assert.notEqual(bf1.fd, bf2.fd);
     assert(bf1.equals(bf2));
-    assert.strictEqual(bf1.encoding, bf2.encoding);
-    assert.strictEqual(bf1.index, bf2.index);
+    assert.equal(bf1.encoding, bf2.encoding);
+    assert.equal(bf1.index, bf2.index);
   });
 
   it('closeFile & openFile', () => {
@@ -194,7 +196,7 @@ describe('bufferlo.js', () => {
     bf3.append('c');
     bf1.concat(bf2, bf3);
 
-    assert.strictEqual(bf1.length, 3);
+    assert.equal(bf1.length, 3);
     assert.strictEqual(bf1.at(0), 97);
     assert.strictEqual(bf1.at(1), 98);
     assert.strictEqual(bf1.at(2), 99);
@@ -249,7 +251,7 @@ describe('bufferlo.js', () => {
     bf.append('a');
     bf.append('b');
     bf.extend(12);
-    assert.strictEqual(bf.length, 16);
+    assert.equal(bf.length, 16);
     assert.strictEqual(bf.at(0), 97);
     assert.strictEqual(bf.at(1), 98);
   });
@@ -284,9 +286,9 @@ describe('bufferlo.js', () => {
     bf.fromFile((_bf) => {
       assert.equal(_bf.length, 3);
       assert.equal(_bf.index, 3);
-      assert.equal(_bf.at(0), 97);
-      assert.equal(_bf.at(1), 98);
-      assert.equal(_bf.at(2), 99);
+      assert.strictEqual(_bf.at(0), 97);
+      assert.strictEqual(_bf.at(1), 98);
+      assert.strictEqual(_bf.at(2), 99);
       _bf.closeFile();
     });
   });
@@ -297,9 +299,9 @@ describe('bufferlo.js', () => {
     bf.fromFileSync();
     assert.equal(bf.length, 3);
     assert.equal(bf.index, 3);
-    assert.equal(bf.at(0), 97);
-    assert.equal(bf.at(1), 98);
-    assert.equal(bf.at(2), 99);
+    assert.strictEqual(bf.at(0), 97);
+    assert.strictEqual(bf.at(1), 98);
+    assert.strictEqual(bf.at(2), 99);
     bf.closeFile();
   });
 
@@ -308,7 +310,7 @@ describe('bufferlo.js', () => {
     bf.fromHex('616263');
     assert.equal(bf.length, 3);
     assert.equal(bf.index, 3);
-    assert.equal(bf.toString(), '616263');
+    assert.strictEqual(bf.toString(), '616263');
   });
 
   it('isBuffer', () => {
@@ -396,39 +398,39 @@ describe('bufferlo.js', () => {
     let bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
-    assert.equal(bf.toBinary(), '011000010110001001100011');
+    assert.strictEqual(bf.toBinary(), '011000010110001001100011');
 
     bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
     bf.set(1, 0);
-    assert.equal(bf.toBinary(), '011000010000000001100011');
+    assert.strictEqual(bf.toBinary(), '011000010000000001100011');
   });
 
   it('toDecimal', () => {
     let bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
-    assert.equal(bf.toDecimal(), '097098099');
+    assert.strictEqual(bf.toDecimal(), '097098099');
 
     bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
     bf.set(1, 0);
-    assert.equal(bf.toDecimal(), '097000099');
+    assert.strictEqual(bf.toDecimal(), '097000099');
   });
 
   it('toHex', () => {
     let bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
-    assert.equal(bf.toHex(), '616263');
+    assert.strictEqual(bf.toHex(), '616263');
 
     bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
     bf.set(1, 0);
-    assert.equal(bf.toHex(), '610063');
+    assert.strictEqual(bf.toHex(), '610063');
   });
 
   it('toJSON', () => {
@@ -446,14 +448,14 @@ describe('bufferlo.js', () => {
     const bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
-    assert.equal(bf.toOctal(), '141142143');
+    assert.strictEqual(bf.toOctal(), '141142143');
   });
 
   it('toUtf8', () => {
     const bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
-    assert.equal(bf.toUtf8(), 'abc');
+    assert.strictEqual(bf.toUtf8(), 'abc');
   });
 
   it('toUint8Array', () => {
@@ -464,9 +466,9 @@ describe('bufferlo.js', () => {
     const arr = bf.toUint8Array();
     assert.equal(arr.length, 3);
     assert.equal(arr.byteLength, 3);
-    assert.equal(arr[0], 97);
-    assert.equal(arr[1], 98);
-    assert.equal(arr[2], 99);
+    assert.strictEqual(arr[0], 97);
+    assert.strictEqual(arr[1], 98);
+    assert.strictEqual(arr[2], 99);
   });
 
   it('toView', () => {
@@ -476,9 +478,9 @@ describe('bufferlo.js', () => {
 
     let view = bf.toView();
     assert.equal(view.byteLength, 3);
-    assert.equal(view.getInt8(0), 97);
-    assert.equal(view.getInt8(1), 98);
-    assert.equal(view.getInt8(2), 99);
+    assert.strictEqual(view.getInt8(0), 97);
+    assert.strictEqual(view.getInt8(1), 98);
+    assert.strictEqual(view.getInt8(2), 99);
 
     view = bf.toView(1, 2);
     assert.equal(view.byteLength, 1);
@@ -495,12 +497,10 @@ describe('bufferlo.js', () => {
 
     bf.openFile(file);
     bf.writeToFile((_bf) => {
-      assert.equal(_bf.at(0), 120);
-      assert.equal(_bf.at(1), 121);
-      assert.equal(_bf.at(2), 122);
-
       _bf.closeFile();
-
+      assert.strictEqual(_bf.at(0), 120);
+      assert.strictEqual(_bf.at(1), 121);
+      assert.strictEqual(_bf.at(2), 122);
       unlinkSync(file);
     });
   });
@@ -517,9 +517,9 @@ describe('bufferlo.js', () => {
     bf.writeToFileSync();
     bf.closeFile();
 
-    assert.equal(bf.at(0), 120);
-    assert.equal(bf.at(1), 121);
-    assert.equal(bf.at(2), 122);
+    assert.strictEqual(bf.at(0), 120);
+    assert.strictEqual(bf.at(1), 121);
+    assert.strictEqual(bf.at(2), 122);
 
     unlinkSync(file);
   });

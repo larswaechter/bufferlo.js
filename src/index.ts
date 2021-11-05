@@ -151,7 +151,7 @@ export default class Bufferlo {
   }
 
   get byteLength() {
-    return this.buffer.byteLength;
+    return this.isBuffer() ? this.buffer.byteLength : 0;
   }
 
   get encoding() {
