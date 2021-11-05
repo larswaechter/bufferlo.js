@@ -85,6 +85,7 @@ export default class Bufferlo {
   static ofArray(data: Uint8Array | ReadonlyArray<number>) {
     const bf = new Bufferlo();
     bf.buffer = Buffer.from(data);
+    bf.index = bf.buffer.length;
     return bf;
   }
 
@@ -97,6 +98,7 @@ export default class Bufferlo {
   static ofArrayBuffer(arrayBuffer: WithImplicitCoercion<ArrayBuffer | SharedArrayBuffer>) {
     const bf = new Bufferlo();
     bf.buffer = Buffer.from(arrayBuffer);
+    bf.index = bf.buffer.length;
     return bf;
   }
 
@@ -327,7 +329,7 @@ export default class Bufferlo {
    * * `-1` is returned if target should come after
    *
    * @param buffer - The `Bufferlo` instance to compare
-   * @returns
+   * @returns The comparison
    */
   compare(buffer: Bufferlo) {
     return this.buffer.compare(buffer.buffer);
@@ -598,12 +600,12 @@ export default class Bufferlo {
   }
 
   /**
-   * Decodes the `Buffer` to a single decimal number.
+   * Decodes the `Buffer` to a space-separated decimal string.
    *
    * @returns Decimal number
    */
   toDecimal() {
-    return parseInt(this.toHex(), 16);
+    return this.buffer.reduce((final, byte) => `${final} ${byte.toString(10)}`, '').trim();
   }
 
   /**

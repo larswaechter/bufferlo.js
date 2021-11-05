@@ -85,6 +85,22 @@ describe('bufferlo.js', () => {
     assert.strictEqual(bf.index, 0);
   });
 
+  it('ofArray', () => {
+    const bf = Bufferlo.ofArray([97, 98, 99]);
+    assert.strictEqual(bf.isBuffer(), true);
+    assert.strictEqual(bf.encoding, 'utf-8');
+    assert.strictEqual(bf.length, 3);
+    assert.strictEqual(bf.index, 3);
+  });
+
+  it('ofArrayBuffer', () => {
+    const bf = Bufferlo.ofArrayBuffer(new Uint8Array([97, 98, 99]));
+    assert.strictEqual(bf.isBuffer(), true);
+    assert.strictEqual(bf.encoding, 'utf-8');
+    assert.strictEqual(bf.length, 3);
+    assert.strictEqual(bf.index, 3);
+  });
+
   it('append', () => {
     const bf = new Bufferlo();
     bf.alloc(3);
@@ -381,6 +397,13 @@ describe('bufferlo.js', () => {
     bf.alloc(3);
     bf.write('abc');
     assert.equal(bf.toBinary(), '110000111000101100011');
+  });
+
+  it('toDecimal', () => {
+    const bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+    assert.equal(bf.toDecimal(), '97 98 99');
   });
 
   it('toHex', () => {

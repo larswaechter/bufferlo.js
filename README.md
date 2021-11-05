@@ -11,7 +11,7 @@ A TypeScript library built for the Node Buffer class.
 
 bufferlo.js is TypeScript library that simplifies the work with Node's [Buffer](https://nodejs.org/api/buffer.html) class. It uses a `Buffer` instance under the hood and provides multiple methods to interact with this buffer.
 
-What are Buffers? ([Source](https://nodejs.org/en/knowledge/advanced/buffers/how-to-use-buffers/))
+What is a Buffer? ([Source](https://nodejs.org/en/knowledge/advanced/buffers/how-to-use-buffers/))
 
 > The `Buffer` class in Node.js is designed to handle raw binary data. Each buffer corresponds to some raw memory allocated outside V8. Buffers act somewhat like arrays of integers, but aren't resizable and have a whole bunch of methods specifically for binary data. The integers in a buffer each represent a byte and so are limited to values from 0 to 255 inclusive.
 
