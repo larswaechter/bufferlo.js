@@ -353,6 +353,7 @@ export default class Bufferlo {
    */
   concat(...list: Bufferlo[]): void {
     this.buffer = Buffer.concat([this.buffer, ...list.map((bf) => bf.buffer)]);
+    this.fixIndex();
   }
 
   /**
