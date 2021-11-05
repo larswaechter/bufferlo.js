@@ -102,9 +102,9 @@ export default class Bufferlo {
     return bf;
   }
 
-  constructor(content?: string, encoding: BufferEncoding = 'utf-8') {
-    if (content) {
-      this._buffer = Buffer.from(content);
+  constructor(str?: string, encoding: BufferEncoding = 'utf-8') {
+    if (str) {
+      this._buffer = Buffer.from(str);
       this.index = this.length;
     }
     this._encoding = encoding;
@@ -252,15 +252,15 @@ export default class Bufferlo {
   }
 
   /**
-   * Appends the given content to the `Buffer`, starting from the current `index` position.
+   * Appends the given `string` to the `Buffer`, starting from the current `index` position.
    * The `index` is increased by the number of written bytes.
    *
-   * @param content - The content to append
+   * @param str - The `string` to append
    * @returns The number of written Bytes
    */
-  append(content: string) {
-    if (!this.fit(content)) throw new Error('Not enough memory available!');
-    return this.write(content, this.index);
+  append(str: string) {
+    if (!this.fit(str)) throw new Error('Not enough memory available!');
+    return this.write(str, this.index);
   }
 
   /**
@@ -405,25 +405,25 @@ export default class Bufferlo {
   }
 
   /**
-   * Checks whether the given `content` fits into the `Buffer`.
-   * The content `fits` if enough bytes are unwritten.
+   * Checks whether the given `string` fits into the `Buffer`.
+   * The `string` fits if enough bytes are unwritten.
    *
-   * @param content - The `content` to check
-   * @returns `True` if the `content` fits, otherwise `false`
+   * @param str - The `string` to check
+   * @returns `True` if the `string` fits, otherwise `false`
    */
-  fit(content: string) {
-    return Buffer.byteLength(content, this.encoding) <= this.available();
+  fit(str: string) {
+    return Buffer.byteLength(str, this.encoding) <= this.available();
   }
 
   /**
    * Initializes the `Buffer` from a given Ascii `string`.
    * Sets the `encoding` to ASCII.
    *
-   * @param content - The `content` for the initialization
+   * @param str - The `string` for the initialization
    */
-  fromAscii(content: string) {
+  fromAscii(str: string) {
     this.encoding = 'ascii';
-    this.buffer = Buffer.from(content, this.encoding);
+    this.buffer = Buffer.from(str, this.encoding);
     this.index = this.buffer.length;
   }
 
@@ -454,11 +454,11 @@ export default class Bufferlo {
   /**
    * Initializes the `Buffer` from a given hex `string`.
    *
-   * @param content - The hex `content` for the initialization
+   * @param str - The hex `str` for the initialization
    */
-  fromHex(content: string) {
+  fromHex(str: string) {
     this.encoding = 'hex';
-    this.buffer = Buffer.from(content, this.encoding);
+    this.buffer = Buffer.from(str, this.encoding);
     this.index = this.buffer.length;
   }
 
@@ -692,14 +692,14 @@ export default class Bufferlo {
   }
 
   /**
-   * Writes the given `content` to the `Buffer` starting from `offset`.
+   * Writes the given `string` to the `Buffer` starting from `offset`.
    *
-   * @param content - The `content` to write
+   * @param str - The `string` to write
    * @param offset - The `offset` in bytes
    * @returns The number of written bytes
    */
-  write(content: string, offset: number = 0): number {
-    const n = this.buffer.write(content, offset, this.encoding);
+  write(str: string, offset: number = 0): number {
+    const n = this.buffer.write(str, offset, this.encoding);
     this.index = offset + n;
     return n;
   }
