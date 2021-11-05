@@ -49,11 +49,14 @@ bf.available(); // 5 bytes
 
 bf.openFile('./dummy.txt');
 bf.writeToFileSync(); // writes 'xyz' to dummy.txt
+
+bf.buffer; // Access the raw `Buffer` instance
 ```
 
 ## 📚 Documentation
 
 You can find the complete documentation including all available methods [here](https://larswaechter.github.io/bufferlo.js/).
+Otherwise check out the [tests](https://github.com/larswaechter/bufferlo.js/blob/master/test/index.ts) for a bunch of examples.
 
 ## 🧩 Contributing
 
