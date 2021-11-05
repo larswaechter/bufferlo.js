@@ -130,6 +130,17 @@ export default class Bufferlo {
     this.buffer[index] = parseInt(value, base);
   }
 
+  /**
+   * Adds leading 0's to a given `str` until a `maxLength` is reached.
+   *
+   * @param str - The string to append 0's to
+   * @param maxLength - The strings max length
+   * @returns The string with leading 0's
+   */
+  private zeroPadding(str: string, maxLength: number) {
+    return `${'0'.repeat(maxLength - str.length)}${str}`;
+  }
+
   get buffer() {
     return this._buffer;
   }
@@ -592,20 +603,26 @@ export default class Bufferlo {
 
   /**
    * Decodes the `Buffer` to a binary string.
+   * Each byte is represented by a 8 bit string.
    *
    * @returns Binary string
    */
   toBinary() {
-    return this.buffer.reduce((final, byte) => final + byte.toString(2), '');
+    return this.buffer
+      .reduce((final, byte) => `${final}${this.zeroPadding(byte.toString(2), 8)}`, '')
+      .trim();
   }
 
   /**
    * Decodes the `Buffer` to a space-separated decimal string.
+   * Each byte is represented by a 3 digit string.
    *
-   * @returns Decimal number
+   * @returns Decimal string
    */
   toDecimal() {
-    return this.buffer.reduce((final, byte) => `${final} ${byte.toString(10)}`, '').trim();
+    return this.buffer
+      .reduce((final, byte) => `${final}${this.zeroPadding(byte.toString(10), 3)}`, '')
+      .trim();
   }
 
   /**

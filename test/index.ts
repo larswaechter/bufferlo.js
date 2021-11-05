@@ -393,24 +393,42 @@ describe('bufferlo.js', () => {
   });
 
   it('toBinary', () => {
-    const bf = new Bufferlo();
+    let bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
-    assert.equal(bf.toBinary(), '110000111000101100011');
+    assert.equal(bf.toBinary(), '011000010110001001100011');
+
+    bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+    bf.set(1, 0);
+    assert.equal(bf.toBinary(), '011000010000000001100011');
   });
 
   it('toDecimal', () => {
-    const bf = new Bufferlo();
+    let bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
-    assert.equal(bf.toDecimal(), '97 98 99');
+    assert.equal(bf.toDecimal(), '097098099');
+
+    bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+    bf.set(1, 0);
+    assert.equal(bf.toDecimal(), '097000099');
   });
 
   it('toHex', () => {
-    const bf = new Bufferlo();
+    let bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
     assert.equal(bf.toHex(), '616263');
+
+    bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+    bf.set(1, 0);
+    assert.equal(bf.toHex(), '610063');
   });
 
   it('toJSON', () => {

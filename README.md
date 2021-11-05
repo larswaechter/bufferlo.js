@@ -37,6 +37,7 @@ bf.alloc(3);
 bf.append('a');
 bf.append('b');
 bf.available(); // 1 byte
+bf.toDecimal(); // 097098000
 
 bf.write('xyz');
 bf.fit('a'); // false
