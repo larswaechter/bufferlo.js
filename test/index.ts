@@ -445,10 +445,18 @@ describe('bufferlo.js', () => {
   });
 
   it('toOctal', () => {
-    const bf = new Bufferlo();
+    let bf = new Bufferlo();
     bf.alloc(3);
     bf.write('abc');
     assert.strictEqual(bf.toOctal(), '141142143');
+
+    bf = new Bufferlo();
+    bf.alloc(3);
+    bf.write('abc');
+    bf.set(1, 0);
+    console.log(bf);
+
+    assert.strictEqual(bf.toOctal(), '141000143');
   });
 
   it('toUtf8', () => {

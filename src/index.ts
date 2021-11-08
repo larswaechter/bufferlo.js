@@ -604,7 +604,7 @@ export default class Bufferlo {
 
   /**
    * Decodes the `Buffer` to a binary string.
-   * Each byte is represented by a 8 bit string.
+   * Each byte is represented by a binary 8-tuple.
    *
    * @returns Binary string
    */
@@ -616,7 +616,7 @@ export default class Bufferlo {
 
   /**
    * Decodes the `Buffer` to a space-separated decimal string.
-   * Each byte is represented by a 3 digit string.
+   * Each byte is represented by a decimal 3-tuple.
    *
    * @returns Decimal string
    */
@@ -628,6 +628,7 @@ export default class Bufferlo {
 
   /**
    * Decodes the `Buffer` to a hex string.
+   * Each byte is represented by a hex 2-tuple.
    *
    * @returns Hex string
    */
@@ -646,11 +647,15 @@ export default class Bufferlo {
 
   /**
    * Decodes the `Buffer` to an octal string.
+   * Each byte is represented by an octal 3-tuple.
    *
    * @returns Octal string
    */
   toOctal() {
-    return this.buffer.reduce((final, byte) => final + byte.toString(8), '');
+    return this.buffer.reduce(
+      (final, byte) => `${final}${this.zeroPadding(byte.toString(8), 3)}`,
+      ''
+    );
   }
 
   /**
