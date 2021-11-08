@@ -543,7 +543,7 @@ export default class Bufferlo {
    * @param value - The new `value`
    */
   setChar(index: number, value: string) {
-    if (!value.length) throw new Error('Invalid char value provided!');
+    if (value.length !== 1) throw new Error('Invalid char value provided!');
     this.buffer[index] = value.charCodeAt(0);
   }
 

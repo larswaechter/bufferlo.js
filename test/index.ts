@@ -362,6 +362,8 @@ describe('bufferlo.js', () => {
 
     bf.setChar(0, 'a');
     assert.strictEqual(bf.at(0), 97);
+    assert.throws(() => bf.setChar(0, 'ab'));
+    assert.throws(() => bf.setChar(0, ''));
 
     bf.setHex(0, 'ff');
     assert.strictEqual(bf.at(0), 255);
