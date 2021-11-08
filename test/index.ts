@@ -88,15 +88,13 @@ describe('bufferlo.js', () => {
   });
 
   it('ofArray', () => {
-    const bf = Bufferlo.ofArray([97, 98, 99]);
+    let bf = Bufferlo.ofArray([97, 98, 99]);
     assert.equal(bf.isBuffer(), true);
     assert.equal(bf.encoding, 'utf-8');
     assert.equal(bf.length, 3);
     assert.equal(bf.index, 3);
-  });
 
-  it('ofArrayBuffer', () => {
-    const bf = Bufferlo.ofArrayBuffer(new Uint8Array([97, 98, 99]));
+    bf = Bufferlo.ofArray(new Uint8Array([97, 98, 99]));
     assert.equal(bf.isBuffer(), true);
     assert.equal(bf.encoding, 'utf-8');
     assert.equal(bf.length, 3);
@@ -454,8 +452,6 @@ describe('bufferlo.js', () => {
     bf.alloc(3);
     bf.write('abc');
     bf.set(1, 0);
-    console.log(bf);
-
     assert.strictEqual(bf.toOctal(), '141000143');
   });
 

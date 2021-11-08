@@ -89,19 +89,6 @@ export default class Bufferlo {
     return bf;
   }
 
-  /**
-   * Creates a new `Bufferlo` instance by a given `ArrayBuffer`
-   *
-   * @param data - The `ArrayBuffer`
-   * @returns An new `Bufferlo` instance
-   */
-  static ofArrayBuffer(arrayBuffer: WithImplicitCoercion<ArrayBuffer | SharedArrayBuffer>) {
-    const bf = new Bufferlo();
-    bf.buffer = Buffer.from(arrayBuffer);
-    bf.index = bf.buffer.length;
-    return bf;
-  }
-
   constructor(str?: string, encoding: BufferEncoding = 'utf-8') {
     if (str) {
       this._buffer = Buffer.from(str);
